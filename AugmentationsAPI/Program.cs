@@ -21,7 +21,10 @@ namespace AugmentationsAPI
             //    .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddControllersWithViews();
+            // Inject the JWT Section of the App Settings to Services
+            // so that the Secret Key contained in the Section can be used to Generate JWT Tokens
+            builder.Services.Configure<JwtOptions>(
+                builder.Configuration.GetSection(JwtOptions.Jwt));
 
             var app = builder.Build();
 
