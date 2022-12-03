@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-
-namespace AugmentationsAPI.Data
+﻿namespace AugmentationsAPI.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    using Data.Models;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+
+    public class ApplicationDbContext : IdentityDbContext<Agent>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
