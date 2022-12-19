@@ -16,6 +16,7 @@
         /// <summary>
         /// Injects this Applications Database Context to the Collection of Services.
         /// </summary>
+        /// <param name="services"> The App's Collection of Services. </param>
         /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddDatabase(this IServiceCollection services,
@@ -52,6 +53,7 @@
         /// <summary>
         /// Injects Configuration Settings to the Collection of Services.
         /// </summary>
+        /// <param name="services"> The App's Collection of Services. </param>
         /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
@@ -69,6 +71,8 @@
         /// <summary>
         /// Injects Jwt Authentication Services to the Collection of Services.
         /// </summary>
+        /// <param name="services"> The App's Collection of Services. </param>
+        /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
             IConfiguration configuration)
@@ -122,10 +126,10 @@
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             // Inject a Swagger Generator
-            services.AddSwaggerGen(optioins =>
+            services.AddSwaggerGen(options =>
             {
                 // Define a Swagger Document
-                optioins.SwaggerDoc("v1", new OpenApiInfo
+                options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "AugmentationsAPI",
                     Version = "v1",
