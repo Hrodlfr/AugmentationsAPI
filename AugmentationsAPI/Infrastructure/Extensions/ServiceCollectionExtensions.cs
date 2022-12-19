@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
+    using Microsoft.OpenApi.Models;
     using System.Text;
 
     public static class ServiceCollectionExtensions
@@ -100,7 +101,7 @@
         }
 
         /// <summary>
-        /// Injects this Aplications Services tp the Collection of Services.
+        /// Injects this Application's Services to the Collection of Services.
         /// </summary>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddApplicationService(this IServiceCollection services)
@@ -108,6 +109,39 @@
             services
                 // Inject the Identity Service
                 .AddTransient<IIdentityService, IdentityService>();
+
+            // Return the Collection of Services
+            return services;
+        }
+
+        /// <summary>
+        /// Injects a Swagger Generator to the Collection of Services.
+        /// </summary>
+        /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        {
+            // Inject a Swagger Generator
+            services.AddSwaggerGen(optioins =>
+            {
+                // Define a Swagger Document
+                optioins.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "AugmentationsAPI",
+                    Version = "v1",
+                    Description = "An API about Deus Ex's Augmentations",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Ali Atanasov",
+                        Email = "theumbralpyre@gmail.com",
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "License",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+            });
 
             // Return the Collection of Services
             return services;
