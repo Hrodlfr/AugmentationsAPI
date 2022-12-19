@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
     using Microsoft.OpenApi.Models;
+    using System.Reflection;
     using System.Text;
 
     public static class ServiceCollectionExtensions
@@ -141,6 +142,12 @@
                         Url = new Uri("https://example.com/license"),
                     }
                 });
+
+                // Get the Name of the Generated XML Documentation File with Reflection
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
+                // Configure Swagger to Use the Comments from the XML Documentation File
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
             // Return the Collection of Services
