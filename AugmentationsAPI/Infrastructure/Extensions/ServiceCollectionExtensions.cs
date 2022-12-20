@@ -36,7 +36,7 @@
         {
             services
                 // Inject the Identity Services with a Custom User Class
-                .AddIdentity<Agent, IdentityRole>(options =>
+                .AddIdentity<User, IdentityRole>(options =>
                 {
                     options.Password.RequireDigit = false;
                     options.Password.RequireNonAlphanumeric = false;

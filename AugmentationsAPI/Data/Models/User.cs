@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Identity;
 
-    public class Agent : IdentityUser
+    public class User : IdentityUser
     {
 
     }
