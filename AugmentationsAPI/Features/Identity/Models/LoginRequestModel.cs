@@ -2,6 +2,9 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// A Model containing Information Required for a User to be Logged In.
+    /// </summary>
     public class LoginRequestModel
     {
         /// <summary>

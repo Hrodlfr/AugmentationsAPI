@@ -2,6 +2,9 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// A Model containing Information Required to Register a User.
+    /// </summary>
     public class RegisterRequestModel
     {
         /// <summary>

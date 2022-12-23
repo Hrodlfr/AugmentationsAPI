@@ -1,5 +1,8 @@
 ﻿namespace AugmentationsAPI.Features.Identity.Models
 {
+    /// <summary>
+    /// A Model containing the JWT Token a User, who was just Logged In.
+    /// </summary>
     public class LoginResponseModel
     {
         /// <summary>
