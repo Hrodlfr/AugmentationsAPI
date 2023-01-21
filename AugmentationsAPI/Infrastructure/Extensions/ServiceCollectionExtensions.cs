@@ -113,7 +113,9 @@
         {
             services
                 // Inject the Identity Service
-                .AddTransient<IIdentityService, IdentityService>();
+                .AddTransient<IIdentityService, IdentityService>()
+                // Inject the Augmentations Service
+                .AddTransient<IAugmentationService, AugmentationService>();
 
             // Return the Collection of Services
             return services;
@@ -144,6 +146,35 @@
                     {
                         Name = "License",
                         Url = new Uri("https://example.com/license"),
+                    }
+                });
+
+                // Define the Security Scheme Type
+                // Adding an Authorization Function to the Swagger UI,
+                // Allowing the JWT Token to be Used for Authorization in the Swagger UI
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Token Bearer Authorization. \n Example: \"Bearer {JWT Token}\"",
+                });
+
+                // Apply the Security Scheme Defined Above Globally
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
                     }
                 });
 
