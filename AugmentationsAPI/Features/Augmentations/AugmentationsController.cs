@@ -38,11 +38,10 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces("application/json")]
-        [Route(nameof(GetAll))]
-        public async Task<IEnumerable<Augmentation>> GetAll()
+        public async Task<ActionResult<IEnumerable<Augmentation>>> GetAll()
         {
             // Return all Augmentations from the Database
-            return await augmentationService.GetAll();
+            return Ok(await augmentationService.GetAll());
         }
 
         /// <summary>
@@ -65,12 +64,11 @@
         /// <response code="200"> The Matching Augmentation was Returned. </response>
         /// <response code="404"> The Matching Augmentation wasn't found. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
-        [HttpGet]
+        [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces("application/json")]
-        [Route(nameof(Get) + "/{id}")]
         public async Task<ActionResult<Augmentation>> Get(int id)
         {
             // Attempt to Get the Matching Augmentation
@@ -112,7 +110,6 @@
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces("application/json")]
-        [Route(nameof(Create))]
         public async Task<ActionResult> Create(AugmentationRequestModel model)
         {
             // Create the New Augmentation
@@ -154,11 +151,10 @@
         /// <response code="200"> The Augmentation was Updated. </response>
         /// <response code="400"> The Augmentation couldn't be Updated. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
-        [HttpPut]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Route(nameof(Update) + "/{id}")]
         public async Task<ActionResult> Update(int id, AugmentationRequestModel model)
         {
             // Attempt Update the Augmentation
@@ -190,11 +186,10 @@
         /// <response code="200"> The Augmentation was Deleted. </response>
         /// <response code="400"> The Augmentation couldn't be Deleted. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
-        [HttpDelete]
+        [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Route(nameof(Delete) + "/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             // Attempt to Delete the Augmentation
