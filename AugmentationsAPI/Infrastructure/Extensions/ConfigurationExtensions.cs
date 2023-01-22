@@ -7,6 +7,6 @@
         /// </summary>
         /// <returns> The Default Connection String. </returns>
         public static string GetDefaultConnectionString(this IConfiguration configuration)
-            => configuration.GetConnectionString("DefaultConnection");
+            => configuration.GetConnectionString("DefaultConnection")!;
     }
 }

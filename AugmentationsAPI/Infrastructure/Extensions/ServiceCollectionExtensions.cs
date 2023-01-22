@@ -1,6 +1,7 @@
 ﻿namespace AugmentationsAPI.Infrastructure.Extensions
 {
-    using AugmentationsAPI.Features.Identity;
+    using Features.Augmentations;
+    using Features.Identity;
     using Data;
     using Data.Models;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +18,7 @@
         /// Injects this Applications Database Context to the Collection of Services.
         /// </summary>
         /// <param name="services"> The App's Collection of Services. </param>
-        /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
+        /// <param name="configuration"> A Collection of the Applications Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddDatabase(this IServiceCollection services,
             IConfiguration configuration)
@@ -54,7 +55,7 @@
         /// Injects Configuration Settings to the Collection of Services.
         /// </summary>
         /// <param name="services"> The App's Collection of Services. </param>
-        /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
+        /// <param name="configuration"> A Collection of the Applications Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddConfigurationSettings(this IServiceCollection services,
             IConfiguration configuration)
@@ -72,14 +73,14 @@
         /// Injects Jwt Authentication Services to the Collection of Services.
         /// </summary>
         /// <param name="services"> The App's Collection of Services. </param>
-        /// <param name="configuration"> A Collection of the Applicaitons Configuration Providers. </param>
+        /// <param name="configuration"> A Collection of the Applications Configuration Providers. </param>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
             IConfiguration configuration)
         {
             // Encode the characters of the Secret Key into a Sequence of Bytes
             // and Store it in a Variable
-            var securityKey = Encoding.ASCII.GetBytes(configuration.GetSection(JwtOptions.Jwt)[JwtOptions.JwtKey]);
+            var securityKey = Encoding.ASCII.GetBytes(configuration.GetSection(JwtOptions.Jwt)[JwtOptions.JwtKey]!);
 
             // Inject the Jwt Authentication Services
             services

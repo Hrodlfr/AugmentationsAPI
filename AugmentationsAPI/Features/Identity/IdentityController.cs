@@ -32,20 +32,19 @@
         /// 
         ///     POST Identity/Register
         ///     {
-        ///      "userName": "JCDentont", 
+        ///      "userName": "JCDenton", 
         ///      "password": "NanoAugmented"
         ///     {
         /// 
         /// </remarks>
         /// 
-        /// <param name="model"> The Model which contains both Required and Optional Information
-        ///                      about the User Which is to be Registered. </param>
+        /// <param name="model"> A Data Transfer Object whose Data will be Used to Register the User. </param>
         ///                      
-        /// <returns> An Action Result of Ok if the Registration is Successful
-        ///           or An Action Result of Bad Request if the Registration is Unsuccessful. </returns>
+        /// <returns> Ok if the Registration is Successful
+        ///           or BadRequest if the Registration is Unsuccessful. </returns>
         ///           
-        /// <response code="200"> If the User is Succesfully Registered. </response>
-        /// <response code="400"> If the Registration is Unsuccesful. </response>
+        /// <response code="200"> The User was Successfully Registered. </response>
+        /// <response code="400"> The Users Registration was Unsuccessful. </response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,16 +62,9 @@
             // which indicates if the Registration was successful, to a Variable
             var result = await userManager.CreateAsync(user, model.Password);
 
-            // If the Result of the Registration was Successful...
-            if (result.Succeeded)
-            {
-                // ...Return an Action Result of Ok
-                return Ok();
-            }
-
-            // ...Else If the Result of the Registration was Unsuccessful...
-            // ...Return an Action Result of Bad Request and The Errors which caused the Registration to Fail
-            return BadRequest(result.Errors);
+            // Return Ok If the Registration was Successful...
+            // OR BadRequest with the Errors If the Registration was Unsuccessful 
+            return result.Succeeded ? Ok() : BadRequest(result.Errors);
         }
 
         /// <summary>
@@ -84,24 +76,24 @@
         /// 
         ///     POST Identity/Login
         ///     {
-        ///      "userName": "JCDentont",
+        ///      "userName": "JCDenton",
         ///      "password": "NanoAugmented"
         ///     }
         /// 
         /// </remarks>
         /// 
-        /// <param name="model"> The Model which contains Required Information to Login the User. </param>
+        /// <param name="model"> A Data Transfer Object whose Data will be Used to Register the User. </param>
         /// 
-        /// <returns> A Model which contains the Agents JWT Token if the Login is Successful
-        ///           or an Action Result of Unauthorized if the Login is Unsuccessful. </returns>
+        /// <returns> A Model which contains the Users JWT Token if the Login is Successful
+        ///           or an Unauthorized if the Login is Unsuccessful. </returns>
         ///
-        /// <response code="200"> Returns the User's Unique JWT Token If the User is Succesfully Logged In. </response>
-        /// <response code="401"> If the Log In is Unsuccesful due to a Wrong Password or Username. </response>
+        /// <response code="200"> The User is Successfully Logged In and Their Unique JWT Token was Returned. </response>
+        /// <response code="401"> The Log In Was Unsuccessful Possibly due to a Wrong Password or Username. </response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Route(nameof(Login))]
         [Produces("application/json")]
+        [Route(nameof(Login))]
         public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel model)
         {
             // Attempt to Find a User by the Given UserName
@@ -111,10 +103,9 @@
             // If No Such User Exists...
             if (user == null)
             {
-                // ...Return an Action Result of Unauthorized
+                // ...Return Unauthorized
                 return Unauthorized();
             }
-            // ...Else If a User Exists with the Same UserName...
 
             // Check if the Given Password Is the Password of the Existing User
             // and Store the Result in a Variable
@@ -123,15 +114,14 @@
             // If the Given Password is Invalid...
             if (!passwordValid)
             {
-                // ...Return an Action Result of Unauthorized
+                // ...Return Unauthorized
                 return Unauthorized();
             }
-            // ...Else If the Given Password is Valid...
 
             // Generate a JWT Token and Store it in a Variable
-            var token = identityService.GenerateJwtToken(user.Id, user.UserName, this.jwtOptions.Key);
+            var token = identityService.GenerateJwtToken(user.Id, user.UserName!, jwtOptions.Key);
 
-            // Return a Model which contains the JWT Token of the Agent
+            // Return a Model which contains the JWT Token of the User
             return new LoginResponseModel
             {
                 Token = token

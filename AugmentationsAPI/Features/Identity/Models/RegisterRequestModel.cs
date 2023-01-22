@@ -12,13 +12,13 @@
         /// </summary>
         /// <example>JCDenton</example>
         [Required]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = "";
 
         /// <summary>
         /// The Password of the User which Requests to be Registered.
         /// </summary>
         /// <example>NanoAugmented</example>
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
     }
 }
