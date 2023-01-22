@@ -3,6 +3,7 @@
     using Data;
     using Data.Models;
     using Models;
+    using Mapster;
     using Microsoft.EntityFrameworkCore;
 
     public class AugmentationService : IAugmentationService
@@ -47,16 +48,8 @@
         /// <returns> The Id of the newly Added Augmentation. </returns>
         public async Task<int> Create(AugmentationRequestModel model)
         {
-            // Initialize a new Augmentation
-            var augmentation = new Augmentation();
-            
-            // Pass the Values of the Model into the Initialized Augmentation
-            augmentation.Name = model.Name;
-            augmentation.Type = model.Type;
-            augmentation.Area = model.Area;
-            augmentation.Description = model.Description;
-            augmentation.Activation = model.Activation;
-            augmentation.EnergyConsumption = model.EnergyConsumption;
+            // Initialize a new Augmentation and Map the Request Models Values to It
+            var augmentation = model.Adapt<Augmentation>();
             
             // Add the Augmentation to the Database
             await data.Augmentations.AddAsync(augmentation);
@@ -86,14 +79,9 @@
                 return false;
             }
             // Else
-            
-            // Pass the Updated Values to the Augmentation
-            augToUpdate.Name = model.Name;
-            augToUpdate.Type = model.Type;
-            augToUpdate.Area = model.Area;
-            augToUpdate.Description = model.Description;
-            augToUpdate.Activation = model.Activation;
-            augToUpdate.EnergyConsumption = model.EnergyConsumption;
+
+            // Map the Updated Values to the Existing Augmentation
+            model.Adapt(augToUpdate);
             
             // Save the Changes to the Database
             await data.SaveChangesAsync();

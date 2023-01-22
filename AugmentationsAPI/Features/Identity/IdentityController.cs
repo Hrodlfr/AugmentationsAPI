@@ -2,6 +2,7 @@
 {
     using Models;
     using Data.Models;
+    using Mapster;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
@@ -51,12 +52,8 @@
         [Route(nameof(Register))]
         public async Task<ActionResult> Register(RegisterRequestModel model)
         {
-            // Initialize a New User and Assign to it the Values from the Model
-            // TODO: Add an ORM
-            var user = new User
-            {
-                UserName = model.UserName
-            };
+            // Initialize a New User and Map the Request Models Values to It
+            var user = model.Adapt<User>();
 
             // Attempt to Register the User and Assign the Returned Value,
             // which indicates if the Registration was successful, to a Variable
