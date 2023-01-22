@@ -24,7 +24,7 @@
         /// <remarks>
         /// Sample Request:
         ///
-        ///     GET Augmentations/GetAll
+        ///     GET Augmentations
         ///     {
         ///     }
         /// 
@@ -51,7 +51,7 @@
         /// <remarks>
         /// Sample Request:
         ///
-        ///     GET Augmentations/Get/1
+        ///     GET Augmentations/1
         ///     {
         ///     }
         ///
@@ -86,7 +86,7 @@
         /// <remarks>
         /// Sample Request:
         ///
-        ///     POST Augmentations/Create
+        ///     POST Augmentations
         ///     {
         ///         "type": "Mechanical",
         ///         "area": "Torso",
@@ -129,7 +129,7 @@
         /// <remarks>
         /// Sample Request:
         ///
-        ///     PUT Augmentations/Update/1
+        ///     PUT Augmentations/1
         ///     {
         ///         "type": "NanoTechnological",
         ///         "area": "Arms",
@@ -172,7 +172,7 @@
         /// <remarks>
         /// Sample Request:
         ///
-        ///     DELETE Augmentations/Delete/1
+        ///     DELETE Augmentations/1
         ///     {
         ///     }
         /// 
