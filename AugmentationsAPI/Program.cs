@@ -24,24 +24,26 @@ namespace AugmentationsAPI
                 .AddSwagger()
                 // Inject Controller Services
                 .AddControllers();
-
+            
             var app = builder.Build();
 
             app
-               // Enable Swagger Middleware for Serving Generated JSON Documents 
-               .UseSwagger()
-               // Enable Swagger Middleware for Serving the Swagger UI
-               .UseSwaggerUI(options =>
-               {
-                   // Add a Swagger Endpoint
-                   options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                   // Set the Route Prefix to an Empty String so that the Swagger UI will be Served at the App's Root
-                   options.RoutePrefix = string.Empty;
-               })
-               // Enable Authentication Middleware
-               .UseAuthentication()
-               // Enable Authorization Middleware
-               .UseAuthorization();
+                // Enable Swagger Middleware for Serving Generated JSON Documents 
+                .UseSwagger()
+                // Enable Swagger Middleware for Serving the Swagger UI
+                .UseSwaggerUI(options =>
+                {
+                    // Add a Swagger Endpoint
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    // Set the Route Prefix to an Empty String so that the Swagger UI will be Served at the App's Root
+                    options.RoutePrefix = string.Empty;
+                })
+                // Enable Authentication Middleware
+                .UseAuthentication()
+                // Enable Authorization Middleware
+                .UseAuthorization()
+                // Add Exception Handler Middleware
+                .AddExceptionHandler();
 
             app.MapControllers();
             app.Run();
