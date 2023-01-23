@@ -25,6 +25,7 @@
         /// </summary>
         /// <example>Typhoon Explosive System</example>
         [Required]
+        [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -32,6 +33,7 @@
         /// </summary>
         /// <example>The Typhoon is a series of interlinked electromagnetic launchers installed in the user's arms and connected to a processor at the base of the user's spine. The system launches a number of spheres loaded with shaped liquid crystal elastomer filled with pentaerythritol tetranitrate microcharges which then explode, sending small steel ball bearings out as lethal shrapnel in all directions around the firer.</example>
         [Required]
+        [MaxLength(1000)]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
