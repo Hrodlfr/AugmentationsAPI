@@ -62,60 +62,32 @@
         }
 
         /// <summary>
-        /// Attempts to Update an Augmentation.
+        /// Updates an Augmentation.
         /// </summary>
-        /// <param name="id"> The Id of an Existing Augmentation whose Data will be Updated. </param>
+        /// <param name="augToUpdate"> An Augmentation whose Data will be Updated. </param>
         /// <param name="model"> A Data Transfer Object which contains the Updated Data for an Augmentation. </param>
         /// <returns> A Bool indicating whether the Update was Successful. </returns>
-        public async Task<bool> Update(int id, AugmentationRequestModel model)
+        public async Task Update(Augmentation augToUpdate, AugmentationRequestModel model)
         {
-            // Attempt to Get the Augmentation which is to be Updated
-            var augToUpdate = await Get(id);
-
-            // If The Augmentation was Not Found...
-            if (augToUpdate == null)
-            {
-                // ...Return False, Indicating that the Update wasn't Successful
-                return false;
-            }
-            // Else
-
             // Map the Updated Values to the Existing Augmentation
             model.Adapt(augToUpdate);
             
             // Save the Changes to the Database
             await data.SaveChangesAsync();
-
-            // Return True, Indicating that the Update was Successful
-            return true;
         }
 
         /// <summary>
-        /// Attempts to Delete an Augmentation.
+        /// Deletes an Augmentation.
         /// </summary>
-        /// <param name="id"> The Id of the Augmentation to be Deleted. </param>
+        /// <param name="augToDelete"> The Augmentation to be Deleted. </param>
         /// <returns> A Bool indicating whether the Deletion was Successful. </returns>
-        public async Task<bool> Delete(int id)
+        public async Task Delete(Augmentation augToDelete)
         {
-            // Attempt to Get the Augmentation which is to be Deleted
-            var augToDelete = await Get(id);
-            
-            // If The Augmentation was Not Found...
-            if (augToDelete == null)
-            {
-                // ...Return False, Indicating that the Deletion wasn't Successful
-                return false;
-            }
-            // Else
-
             // Delete the Augmentation from the Database
             data.Augmentations.Remove(augToDelete);
             
             // Save the Changes to the Database
             await data.SaveChangesAsync();
-
-            // Return True, Indicating that the Deletion was Successful
-            return true;
         }
     }
 }

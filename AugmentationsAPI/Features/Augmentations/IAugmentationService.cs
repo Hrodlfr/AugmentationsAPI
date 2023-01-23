@@ -26,19 +26,16 @@
         public Task<int> Create(AugmentationRequestModel model);
 
         /// <summary>
-        /// Attempts to Update an Augmentation.
+        /// Updates an Augmentation.
         /// </summary>
-        /// <param name="id"> The Id of an Existing Augmentation whose Data will be Updated. </param>
+        /// <param name="augToUpdate"> An Augmentation whose Data will be Updated. </param>
         /// <param name="model"> A Data Transfer Object which contains the Updated Data for an Augmentation. </param>
-        /// <returns> A Bool indicating whether the Update was Successful. </returns>
-        public Task<bool> Update(int id, AugmentationRequestModel model);
+        public Task Update(Augmentation augToUpdate, AugmentationRequestModel model);
 
         /// <summary>
-        /// Attempts to Delete an Augmentation.
+        /// Deletes an Augmentation.
         /// </summary>
-        /// <param name="id"> The Id of the Augmentation to be Deleted. </param>
-        /// <returns> A Bool indicating whether the Deletion was Successful. </returns>
-        public Task<bool> Delete(int id);
-
+        /// <param name="augToDelete"> The Augmentation to be Deleted. </param>
+        public Task Delete(Augmentation augToDelete);
     }
 }

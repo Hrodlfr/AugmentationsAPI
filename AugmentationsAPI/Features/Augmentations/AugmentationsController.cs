@@ -150,20 +150,29 @@
         ///         Or BadRequest If the New Values weren't Valid. </returns>
         /// 
         /// <response code="200"> The Augmentation was Updated. </response>
-        /// <response code="400"> The Augmentation couldn't be Updated. </response>
+        /// <response code="404"> The Augmentation which was to be Updated couldn't be Found. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
         [HttpPut(RouteIdParameter)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Update(int id, AugmentationRequestModel model)
         {
-            // Attempt Update the Augmentation
-            var updateSuccessful = await augmentationService.Update(id, model);
+            // Attempt to Get the Augmentation which is to be Updated
+            var augToUpdate = await augmentationService.Get(id);
 
-            // Return Ok If the Update was Successful...
-            // OR BadRequest If the Update was Unsuccessful
-            return updateSuccessful == false ? BadRequest() : Ok();
+            // If The Augmentation was Not Found...
+            if (augToUpdate == null)
+            {
+                // ...Return False, Indicating that the Update wasn't Successful
+                return NotFound();
+            }
+            
+            // Update the Augmentation
+            await augmentationService.Update(augToUpdate, model);
+
+            // Return Ok
+            return Ok();
         }
 
         /// <summary>
@@ -185,20 +194,29 @@
         ///         or BadRequest If it wasn't. </returns>
         ///
         /// <response code="200"> The Augmentation was Deleted. </response>
-        /// <response code="400"> The Augmentation couldn't be Deleted. </response>
+        /// <response code="404"> The Augmentation which was to be Deleted couldn't be Found. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
         [HttpDelete(RouteIdParameter)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Delete(int id)
         {
-            // Attempt to Delete the Augmentation
-            var result = await augmentationService.Delete(id);
+            // Attempt to Get the Augmentation which is to be Deleted
+            var augToDelete = await augmentationService.Get(id);
             
-            // Return Ok If the Deletion was Successful...
-            // OR BadRequest If the Deletion was Unsuccessful
-            return result == false ? BadRequest() : Ok();
+            // If The Augmentation was Not Found...
+            if (augToDelete == null)
+            {
+                // ...Return False, Indicating that the Deletion wasn't Successful
+                return NotFound();
+            }
+        
+            // Delete the Augmentation
+            await augmentationService.Delete(augToDelete);
+            
+            // Return Ok
+            return Ok();
         }
 
     }
