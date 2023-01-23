@@ -1,5 +1,7 @@
 ﻿namespace AugmentationsAPI.Infrastructure.Extensions
 {
+    using static Infrastructure.Constants;
+
     public static class ApplicationBuilderExtensions
     {
         /// <summary>
@@ -10,7 +12,7 @@
         public static IApplicationBuilder AddExceptionHandler(this IApplicationBuilder app)
         {
             // Add the Exception Handler Middleware with a Path that Points to the Error Controller
-            return app.UseExceptionHandler("/error");
+            return app.UseExceptionHandler(RouteError);
         }
 
         /// <summary>
