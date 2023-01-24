@@ -22,14 +22,17 @@
         /// Returns all Augmentations from the Database.
         /// </summary>
         /// <returns> All Augmentations in the Database. </returns>
-        public async Task<IEnumerable<Augmentation>> GetAll()
+        public async Task<IEnumerable<AugmentationGetResponseModel>> GetAll()
         {
             // Return All Augmentations
-            return await data.Augmentations.ToListAsync();
+            return await data.Augmentations
+                .Select(aug => 
+                    aug.Adapt<AugmentationGetResponseModel>()
+                    ).ToListAsync();
         }
 
         /// <summary>
-        /// Returns an Augmentation with a Matching Id.
+        /// Returns an Augmentation with a Matching Id which is Tracked by Entity Framework.
         /// </summary>
         /// <param name="id"> An Id which will be used to Find a matching Augmentation. </param>
         /// <returns> An Augmentation with a Matching Id Or Null If an Augmentation with a Matching Id wasn't Found. </returns>
@@ -38,6 +41,22 @@
             // Return the First Augmentation with a Matching Id
             return await data.Augmentations
                 .Where(augment => augment.Id == id)
+                .FirstOrDefaultAsync();
+        }
+        
+        /// <summary>
+        /// Returns an Augmentation with a Matching Id which is Not Tracked by Entity Framework..
+        /// </summary>
+        /// <param name="id"> An Id which will be used to Find a matching Augmentation. </param>
+        /// <param name="tracking"> A Boolean Value which Indicates whether the Returned Entity should be Tracked or Not. </param>
+        /// <returns> An Augmentation with a Matching Id Or Null If an Augmentation with a Matching Id wasn't Found. </returns>
+        public async Task<AugmentationGetResponseModel?> Get(int id, bool tracking)
+        {
+            // Return the First Augmentation with a Matching Id
+            return await data.Augmentations
+                .AsNoTracking()
+                .Where(augment => augment.Id == id)
+                .Select(aug => aug.Adapt<AugmentationGetResponseModel>())
                 .FirstOrDefaultAsync();
         }
         

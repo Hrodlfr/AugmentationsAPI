@@ -1,6 +1,5 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations
 {
-    using Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Models;
@@ -39,7 +38,7 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<IEnumerable<Augmentation>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AugmentationGetResponseModel>>> GetAll()
         {
             // Return all Augmentations from the Database
             return Ok(await augmentationService.GetAll());
@@ -70,10 +69,10 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<Augmentation>> Get(int id)
+        public async Task<ActionResult<AugmentationGetResponseModel>> Get(int id)
         {
             // Attempt to Get the Matching Augmentation
-            var matchingAug = await augmentationService.Get(id);
+            var matchingAug = await augmentationService.Get(id, false);
 
             // Return Ok with the Matching Augmentation...
             // OR Not Found If the Augmentation wasn't Found
@@ -120,7 +119,7 @@
             var urlOfTheNewAug = Url.Action(nameof(Get), nameof(Augmentations), new { id = idOfNewAug })!;
             
             // Return Created with the New Augmentation in the Response Body and Its URL in the Response Header
-            return Created(urlOfTheNewAug, await augmentationService.Get(idOfNewAug));
+            return Created(urlOfTheNewAug, await augmentationService.Get(idOfNewAug, false));
         }
 
         /// <summary>
