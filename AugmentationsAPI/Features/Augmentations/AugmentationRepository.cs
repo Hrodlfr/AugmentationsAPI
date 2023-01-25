@@ -22,17 +22,27 @@
         /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
+        /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
         /// <returns> A Paged List of all Augmentations in the Database. </returns>
-        public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters)
+        public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters,
+            AugmentationRequestSearchParameters searchParameters)
         {
-            // Return All Augmentations
-            return await data.Augmentations
+            var augs = await data.Augmentations
                 // Use Projection for Better Performance
                 .Select(aug => aug.Adapt<AugmentationResponseModel>())
                 // Skip the Entities Contained in the Pages Before the Requested Page
                 .Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
                 .Take(pagingParameters.PageSize)
                 .ToListAsync();
+
+            if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))
+            {
+                return augs;
+            }
+
+            var lowerCaseTerm = searchParameters.SearchTerm.ToLower();
+
+            return augs.Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm) || aug.Description.ToLower().Contains(lowerCaseTerm));
         }
 
         /// <summary>
