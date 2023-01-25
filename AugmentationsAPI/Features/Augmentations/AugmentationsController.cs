@@ -208,7 +208,7 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Patch(int id, [FromBody]JsonPatchDocument<AugmentationRequestModel> patchDoc)
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
         {
             // Attempt to Get the Augmentation which is to be Patched
             var augToPatch = await augmentationService.Get(id);
