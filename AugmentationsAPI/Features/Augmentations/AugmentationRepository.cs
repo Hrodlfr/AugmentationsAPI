@@ -4,17 +4,16 @@
     using Data.Models;
     using Models;
     using Mapster;
-    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.EntityFrameworkCore;
 
-    public class AugmentationService : IAugmentationService
+    public class AugmentationRepository : IAugmentationRepository
     {
         /// <summary>
         /// The Database Context of the Application.
         /// </summary>
         private readonly ApplicationDbContext data;
 
-        public AugmentationService(ApplicationDbContext data)
+        public AugmentationRepository(ApplicationDbContext data)
         {
             this.data = data;
         }

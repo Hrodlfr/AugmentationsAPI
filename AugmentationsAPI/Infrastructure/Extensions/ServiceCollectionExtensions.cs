@@ -107,7 +107,7 @@
         }
 
         /// <summary>
-        /// Injects this Application's Services to the Collection of Services.
+        /// Injects this Application's Services and Repositories to the Collection of Services.
         /// </summary>
         /// <returns> The <see cref="IServiceCollection"/> so that additional calls can be chained. </returns>
         public static IServiceCollection AddApplicationService(this IServiceCollection services)
@@ -115,8 +115,8 @@
             services
                 // Inject the Identity Service
                 .AddTransient<IIdentityService, IdentityService>()
-                // Inject the Augmentations Service
-                .AddTransient<IAugmentationService, AugmentationService>();
+                // Inject the Augmentations Repository
+                .AddTransient<IAugmentationRepository, AugmentationRepository>();
 
             // Return the Collection of Services
             return services;

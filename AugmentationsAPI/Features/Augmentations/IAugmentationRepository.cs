@@ -3,7 +3,7 @@
     using Data.Models;
     using Models;
 
-    public interface IAugmentationService
+    public interface IAugmentationRepository
     {
         /// <summary>
         /// Returns all Augmentations from the Database.

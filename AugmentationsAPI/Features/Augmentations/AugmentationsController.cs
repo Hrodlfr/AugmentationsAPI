@@ -12,11 +12,11 @@
     [Authorize]
     public class AugmentationsController : ControllerBase
     {
-        private readonly IAugmentationService augmentationService;
+        private readonly IAugmentationRepository augRepo;
 
-        public AugmentationsController(IAugmentationService augmentationService)
+        public AugmentationsController(IAugmentationRepository augRepo)
         {
-            this.augmentationService = augmentationService;
+            this.augRepo = augRepo;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@
         public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll()
         {
             // Return all Augmentations from the Database
-            return Ok(await augmentationService.GetAll());
+            return Ok(await augRepo.GetAll());
         }
 
         /// <summary>
@@ -74,7 +74,7 @@
         public async Task<ActionResult<AugmentationResponseModel>> Get(int id)
         {
             // Attempt to Get the Matching Augmentation
-            var matchingAug = await augmentationService.Get(id, false);
+            var matchingAug = await augRepo.Get(id, false);
 
             // Return Ok with the Matching Augmentation...
             // OR Not Found If the Augmentation wasn't Found
@@ -115,13 +115,13 @@
         public async Task<ActionResult> Create(AugmentationRequestModel model)
         {
             // Create the New Augmentation
-            var idOfNewAug = await augmentationService.Create(model);
+            var idOfNewAug = await augRepo.Create(model);
 
             // Generate the URL of the New Augmentation
             var urlOfTheNewAug = Url.Action(nameof(Get), nameof(Augmentations), new { id = idOfNewAug })!;
             
             // Return Created with the New Augmentation in the Response Body and Its URL in the Response Header
-            return Created(urlOfTheNewAug, await augmentationService.Get(idOfNewAug, false));
+            return Created(urlOfTheNewAug, await augRepo.Get(idOfNewAug, false));
         }
 
         /// <summary>
@@ -160,7 +160,7 @@
         public async Task<ActionResult> Update(int id, AugmentationRequestModel model)
         {
             // Attempt to Get the Augmentation which is to be Updated
-            var augToUpdate = await augmentationService.Get(id);
+            var augToUpdate = await augRepo.Get(id);
 
             // If The Augmentation was Not Found...
             if (augToUpdate == null)
@@ -170,7 +170,7 @@
             }
             
             // Update the Augmentation
-            await augmentationService.Update(augToUpdate, model);
+            await augRepo.Update(augToUpdate, model);
 
             // Return Ok
             return Ok();
@@ -211,7 +211,7 @@
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
         {
             // Attempt to Get the Augmentation which is to be Patched
-            var augToPatch = await augmentationService.Get(id);
+            var augToPatch = await augRepo.Get(id);
 
             // If The Augmentation was Not Found...
             if (augToPatch == null)
@@ -234,7 +234,7 @@
             }
             
             // Update the Augmentation
-            await augmentationService.Update(augToPatch, model);
+            await augRepo.Update(augToPatch, model);
             
             // Return Ok
             return Ok();
@@ -268,7 +268,7 @@
         public async Task<ActionResult> Delete(int id)
         {
             // Attempt to Get the Augmentation which is to be Deleted
-            var augToDelete = await augmentationService.Get(id);
+            var augToDelete = await augRepo.Get(id);
             
             // If The Augmentation was Not Found...
             if (augToDelete == null)
@@ -278,7 +278,7 @@
             }
         
             // Delete the Augmentation
-            await augmentationService.Delete(augToDelete);
+            await augRepo.Delete(augToDelete);
             
             // Return Ok
             return Ok();
