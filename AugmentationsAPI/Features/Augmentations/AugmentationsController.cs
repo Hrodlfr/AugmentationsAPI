@@ -20,30 +20,32 @@
         }
 
         /// <summary>
-        /// Returns all Augmentations from the Database.
+        /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
         /// 
         /// <remarks>
         /// Sample Request:
         ///
-        ///     GET Augmentations
+        ///     GET Augmentations?pageSize=50&#38;pageNumber=1
         ///     {
         ///     }
         /// 
         /// </remarks>
-        /// 
-        /// <returns> All Augmentations from the Database. </returns>
         ///
-        /// <response code="200"> All Augmentations from the Database were Returned. </response>
+        /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
+        /// 
+        /// <returns> A Paged List of all Augmentations from the Database. </returns>
+        ///
+        /// <response code="200"> A Paged List of all Augmentations from the Database was Returned. </response>
         /// <response code="401"> The User is not Authorized to Perform this Action. </response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll([FromQuery]AugmentationRequestPagingParameters pagingParameters)
         {
-            // Return all Augmentations from the Database
-            return Ok(await augRepo.GetAll());
+            // Return a Paged List of all Augmentations from the Database
+            return Ok(await augRepo.GetAll(pagingParameters));
         }
 
         /// <summary>

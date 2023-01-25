@@ -6,10 +6,11 @@
     public interface IAugmentationRepository
     {
         /// <summary>
-        /// Returns all Augmentations from the Database.
+        /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
-        /// <returns> All Augmentations in the Database. </returns>
-        public Task<IEnumerable<AugmentationResponseModel>> GetAll();
+        /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
+        /// <returns> A Paged List of all Augmentations in the Database. </returns>
+        public Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters);
 
         /// <summary>
         /// Returns an Augmentation with a Matching Id which is Tracked by Entity Framework..
