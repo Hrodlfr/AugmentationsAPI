@@ -2,7 +2,7 @@
 {
     using Data.Models;
 
-    public class AugmentationGetResponseModel
+    public class AugmentationResponseModel
     {
         /// <summary>
         /// The Identification Number of the Augmentation
