@@ -4,6 +4,7 @@
     using Data.Models;
     using Models;
     using Mapster;
+    using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.EntityFrameworkCore;
 
     public class AugmentationService : IAugmentationService
@@ -22,12 +23,12 @@
         /// Returns all Augmentations from the Database.
         /// </summary>
         /// <returns> All Augmentations in the Database. </returns>
-        public async Task<IEnumerable<AugmentationGetResponseModel>> GetAll()
+        public async Task<IEnumerable<AugmentationResponseModel>> GetAll()
         {
             // Return All Augmentations
             return await data.Augmentations
                 .Select(aug => 
-                    aug.Adapt<AugmentationGetResponseModel>()
+                    aug.Adapt<AugmentationResponseModel>()
                     ).ToListAsync();
         }
 
@@ -50,13 +51,13 @@
         /// <param name="id"> An Id which will be used to Find a matching Augmentation. </param>
         /// <param name="tracking"> A Boolean Value which Indicates whether the Returned Entity should be Tracked or Not. </param>
         /// <returns> An Augmentation with a Matching Id Or Null If an Augmentation with a Matching Id wasn't Found. </returns>
-        public async Task<AugmentationGetResponseModel?> Get(int id, bool tracking)
+        public async Task<AugmentationResponseModel?> Get(int id, bool tracking)
         {
             // Return the First Augmentation with a Matching Id
             return await data.Augmentations
                 .AsNoTracking()
                 .Where(augment => augment.Id == id)
-                .Select(aug => aug.Adapt<AugmentationGetResponseModel>())
+                .Select(aug => aug.Adapt<AugmentationResponseModel>())
                 .FirstOrDefaultAsync();
         }
         

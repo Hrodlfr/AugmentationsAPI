@@ -23,7 +23,9 @@ namespace AugmentationsAPI
                 // Inject Swagger
                 .AddSwagger()
                 // Inject Controller Services
-                .AddControllers();
+                .AddControllers()
+                // Inject Newtonsoft Json Package
+                .AddNewtonsoftJson();
             
             var app = builder.Build();
 

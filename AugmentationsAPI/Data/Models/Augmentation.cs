@@ -1,7 +1,8 @@
 ﻿namespace AugmentationsAPI.Data.Models
 {
     using System.ComponentModel.DataAnnotations;
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// The Type of an Augmentation.
@@ -9,7 +10,7 @@
     /// Mechanical Ones, which Replaces a Body Part Entirely,
     /// or NanoTechnological One, which use Nano Machines to Alter the Human Body without Removal of Body Parts.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum AugmentationType
     {
         Mechanical,
@@ -19,7 +20,7 @@
     /// <summary>
     /// The Area of the Human Body which an Augmentation Affects.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum AugmentationArea
     {
         Torso,
@@ -34,7 +35,7 @@
     /// <summary>
     /// The Method of Activation of an Augmentation.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum AugmentationActivation
     {
         Manual,
@@ -45,7 +46,7 @@
     /// <summary>
     /// The Amount of Energy which is Consumed by an Augmentation.
     /// </summary>
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum AugmentationEnergyConsumption
     {
         Ammo,

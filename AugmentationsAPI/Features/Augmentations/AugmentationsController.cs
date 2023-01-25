@@ -1,8 +1,10 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations
 {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
+    using Mapster;
     using Models;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.JsonPatch;
+    using Microsoft.AspNetCore.Mvc;
     using static Infrastructure.Constants;
 
     [Route("[controller]")]
@@ -38,7 +40,7 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<IEnumerable<AugmentationGetResponseModel>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll()
         {
             // Return all Augmentations from the Database
             return Ok(await augmentationService.GetAll());
@@ -69,7 +71,7 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<AugmentationGetResponseModel>> Get(int id)
+        public async Task<ActionResult<AugmentationResponseModel>> Get(int id)
         {
             // Attempt to Get the Matching Augmentation
             var matchingAug = await augmentationService.Get(id, false);
@@ -163,13 +165,77 @@
             // If The Augmentation was Not Found...
             if (augToUpdate == null)
             {
-                // ...Return False, Indicating that the Update wasn't Successful
+                // ...Return NotFound
                 return NotFound();
             }
             
             // Update the Augmentation
             await augmentationService.Update(augToUpdate, model);
 
+            // Return Ok
+            return Ok();
+        }
+
+        /// <summary>
+        /// Attempts to Patch an Existing Augmentation.
+        /// </summary>
+        ///
+        /// <remarks>
+        ///
+        ///     PATCH Augmentations/8
+        ///     {
+        ///         [
+        ///             {
+        ///                 "op": "replace",
+        ///                 "path": "/name",
+        ///                 "value": "Patched"
+        ///             }
+        ///         ]
+        ///     }
+        /// 
+        /// </remarks>
+        /// 
+        /// <param name="id"> The Id of an Existing Augmentation whose Data will be Patched. </param>
+        /// <param name="patchDoc"> The Patch Document which includes the Patching Operations which will be Performed. </param>
+        /// 
+        /// <returns></returns>
+        /// <response code="200"> The Augmentation was Patched. </response>
+        /// <response code="404"> The Augmentation which was to be Patched couldn't be Found. </response>
+        /// <response code="422"> The Patch Request Contained Validation Errors. </response>
+        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        [HttpPatch(RouteIdParameter)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> Patch(int id, [FromBody]JsonPatchDocument<AugmentationRequestModel> patchDoc)
+        {
+            // Attempt to Get the Augmentation which is to be Patched
+            var augToPatch = await augmentationService.Get(id);
+
+            // If The Augmentation was Not Found...
+            if (augToPatch == null)
+            {
+                // ...Return NotFound
+                return NotFound();
+            }
+
+            // Map the Augmentation to a Request Model
+            var model = augToPatch.Adapt<AugmentationRequestModel>();
+            
+            // Apply the Patching Operations to the Request Model
+            patchDoc.ApplyTo(model);
+            
+            // If the Request Model is Not Valid...
+            if (!TryValidateModel(model))
+            {
+                // ...Return UnprocessableEntity with the Validation Errors
+                return UnprocessableEntity(ModelState);
+            }
+            
+            // Update the Augmentation
+            await augmentationService.Update(augToPatch, model);
+            
             // Return Ok
             return Ok();
         }
@@ -207,7 +273,7 @@
             // If The Augmentation was Not Found...
             if (augToDelete == null)
             {
-                // ...Return False, Indicating that the Deletion wasn't Successful
+                // ...Return NotFound
                 return NotFound();
             }
         
