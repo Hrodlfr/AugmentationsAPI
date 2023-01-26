@@ -185,17 +185,16 @@
         /// </summary>
         ///
         /// <remarks>
-        ///
+        /// Sample Request:
+        /// 
         ///     PATCH Augmentations/8
-        ///     {
-        ///         [
-        ///             {
-        ///                 "op": "replace",
-        ///                 "path": "/name",
-        ///                 "value": "Patched"
-        ///             }
-        ///         ]
-        ///     }
+        ///     [
+        ///         {
+        ///             "op": "replace",
+        ///             "path": "/name",
+        ///             "value": "Patched"
+        ///         }
+        ///     ]
         /// 
         /// </remarks>
         /// 
