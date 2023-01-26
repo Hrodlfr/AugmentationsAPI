@@ -329,5 +329,19 @@
             return Ok();
         }
 
+        /// <summary>
+        /// Returns the Allowed Methods for Requests made to the API.
+        /// </summary>
+        /// <returns> The Allowed Methods for Requests made to the API. </returns>
+        [HttpOptions]
+        public ActionResult Options()
+        {
+            // Add the Allowed Methods to the Header
+            Response.Headers.Add("Allow", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
+
+            // Return Ok
+            return Ok();
+        }
+
     }
 }
