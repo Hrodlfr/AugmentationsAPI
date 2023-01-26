@@ -11,6 +11,7 @@
     using Microsoft.OpenApi.Models;
     using System.Reflection;
     using System.Text;
+    using Features.Links;
 
     public static class ServiceCollectionExtensions
     {
@@ -116,7 +117,13 @@
                 // Inject the Identity Service
                 .AddTransient<IIdentityService, IdentityService>()
                 // Inject the Augmentations Repository
-                .AddTransient<IAugmentationRepository, AugmentationRepository>();
+                .AddTransient<IAugmentationRepository, AugmentationRepository>()
+                // Inject the Link Generation Service
+                .AddTransient<ILinkGenerationService, LinkGenerationService>()
+                // Inject Routing
+                .AddRouting()
+                // Inject the HttpContext Accessor
+                .AddHttpContextAccessor();
 
             // Return the Collection of Services
             return services;

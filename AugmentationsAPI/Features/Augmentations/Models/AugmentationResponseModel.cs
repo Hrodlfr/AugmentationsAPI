@@ -1,6 +1,7 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations.Models
 {
     using Data.Models;
+    using Links.Models;
 
     public class AugmentationResponseModel
     {
@@ -41,5 +42,10 @@
         /// The Amount of Energy Consumed by this Augmentation.
         /// </summary>
         public AugmentationEnergyConsumption EnergyConsumption { get; set; }
+
+        /// <summary>
+        /// The HATEOAS Links of this Resource.
+        /// </summary>
+        public List<Link> Links { get; set; } = new List<Link>();
     }
 }

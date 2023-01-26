@@ -1,5 +1,6 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations
 {
+    using Links;
     using Mapster;
     using Models;
     using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
+        private readonly ILinkGenerationService linkGenerationService;
 
-        public AugmentationsController(IAugmentationRepository augRepo)
+        public AugmentationsController(IAugmentationRepository augRepo, ILinkGenerationService linkGenerationService)
         {
             this.augRepo = augRepo;
+            this.linkGenerationService = linkGenerationService;
         }
 
         /// <summary>
@@ -48,8 +51,18 @@
             [FromQuery]AugmentationRequestSearchParameters searchParameters,
             [FromQuery]AugmentationRequestFilteringParameters filteringParameters)
         {
-            // Return a Paged List of all Augmentations from the Database
-            return Ok(await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters));
+            // Get the List of Augmentations from the Database
+            var augs = await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters);
+
+            // For Each Augmentation in the List...
+            foreach (var aug in augs)
+            {
+                // ...Generate Links
+                aug.Links = linkGenerationService.GenerateLinks(aug.Id);
+            }
+            
+            // Return the List of Augmentations
+            return Ok(augs);
         }
 
         /// <summary>
@@ -82,9 +95,18 @@
             // Attempt to Get the Matching Augmentation
             var matchingAug = await augRepo.Get(id, false);
 
-            // Return Ok with the Matching Augmentation...
-            // OR Not Found If the Augmentation wasn't Found
-            return matchingAug == null ? NotFound() : Ok(matchingAug);
+            // If the Augmentation was Not Found...
+            if (matchingAug == null)
+            {
+                // Return NotFound
+                return NotFound();
+            }
+            
+            // Generate HATEOAS Links for this Resource
+            matchingAug.Links = linkGenerationService.GenerateLinks(matchingAug.Id);
+            
+            // Return Ok with the Augmentation
+            return Ok(matchingAug);
         }
 
         /// <summary>
@@ -118,16 +140,22 @@
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult> Create(AugmentationRequestModel model)
+        public async Task<ActionResult> Post(AugmentationRequestModel model)
         {
             // Create the New Augmentation
             var idOfNewAug = await augRepo.Create(model);
 
             // Generate the URL of the New Augmentation
             var urlOfTheNewAug = Url.Action(nameof(Get), nameof(Augmentations), new { id = idOfNewAug })!;
+
+            // Get the New Augmentation
+            var newAug = await augRepo.Get(idOfNewAug, false);
+
+            // Generate Links for the New Augmentation
+            newAug!.Links = linkGenerationService.GenerateLinks(newAug.Id);
             
             // Return Created with the New Augmentation in the Response Body and Its URL in the Response Header
-            return Created(urlOfTheNewAug, await augRepo.Get(idOfNewAug, false));
+            return Created(urlOfTheNewAug, newAug);
         }
 
         /// <summary>
@@ -177,9 +205,15 @@
             
             // Update the Augmentation
             await augRepo.Update(augToUpdate, model);
+            
+            // Get the Updated Augmentation
+            var updatedAug = await augRepo.Get(id, false);
 
-            // Return Ok
-            return Ok();
+            // Generate Links for the Updated Augmentation
+            updatedAug!.Links = linkGenerationService.GenerateLinks(updatedAug.Id);
+
+            // Return Ok with the Updated Aug
+            return Ok(updatedAug);
         }
 
         /// <summary>
@@ -241,8 +275,14 @@
             // Update the Augmentation
             await augRepo.Update(augToPatch, model);
             
-            // Return Ok
-            return Ok();
+            // Get the Patched Augmentation
+            var patchedAug = await augRepo.Get(id, false);
+
+            // Generate Links for the Patched Augmentation
+            patchedAug!.Links = linkGenerationService.GenerateLinks(patchedAug.Id);
+            
+            // Return Ok with the Patched Augmentation
+            return Ok(patchedAug);
         }
 
         /// <summary>
