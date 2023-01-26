@@ -13,6 +13,95 @@
         /// </summary>
         private readonly ApplicationDbContext data;
 
+        /// <summary>
+        /// Filters a List of Augmentations by the Given Parameters.
+        /// </summary>
+        /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
+        /// <returns> A Filtered List of Augmentations. </returns>
+        private List<AugmentationResponseModel> FilterAugmentationList(IEnumerable<AugmentationResponseModel> augs,
+            AugmentationRequestFilteringParameters filteringParameters)
+        {
+            // If the Type Filter Is Set...
+            if (filteringParameters.Type != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Type == filteringParameters.Type);
+            }
+
+            // If the Area Filter Is Set...
+            if (filteringParameters.Area != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Area == filteringParameters.Area);
+            }
+
+            // If the Activation Filter Is Set...
+            if (filteringParameters.Activation != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Activation == filteringParameters.Activation);
+            }
+
+            // If the Energy Consumption Filter Is Set...
+            if (filteringParameters.EnergyConsumption != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.EnergyConsumption == filteringParameters.EnergyConsumption);
+            }
+
+            // Returned the Filtered List
+            return augs.ToList();
+        }
+        
+        /// <summary>
+        /// Pages a List of Augmentations by the Given Parameters.
+        /// </summary>
+        /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
+        /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
+        /// <returns> A Paged List of Augmentations. </returns>
+        private List<AugmentationResponseModel> PageAugmentationList(IEnumerable<AugmentationResponseModel> augs,
+            AugmentationRequestPagingParameters pagingParameters)
+        {
+            // Return a Paged List of Augmentations
+            return augs
+                // Skip the Entities Contained in the Pages Before the Requested Page
+                .Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
+                // Take the Specified Amount of Entities from the Current Page
+                .Take(pagingParameters.PageSize)
+                .ToList();
+        }
+        
+        /// <summary>
+        /// Searches a List of Augmentations by the Given Parameters.
+        /// </summary>
+        /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
+        /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
+        /// <returns> A List of Augmentations meeting the Search Criteria. </returns>
+        private List<AugmentationResponseModel> SearchAugmentationList(IEnumerable<AugmentationResponseModel> augs,
+            AugmentationRequestSearchParameters searchParameters)
+        {
+            // If there is No Search Term...
+            if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))
+            {
+                // ...Return the Augmentations
+                return augs.ToList();
+            }
+
+            // Transform the Term into Lower Case
+            var lowerCaseTerm = searchParameters.SearchTerm.ToLower();
+
+            // Return the Augmentations who meet the Search Criteria
+            return augs
+                .Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm) 
+                              || aug.Description.ToLower().Contains(lowerCaseTerm))
+                .ToList();
+        }
+        
         public AugmentationRepository(ApplicationDbContext data)
         {
             this.data = data;
@@ -21,72 +110,30 @@
         /// <summary>
         /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
-        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// <returns> A Paged List of all Augmentations in the Database. </returns>
-        public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters,
+        public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestFilteringParameters filteringParameters,
             AugmentationRequestSearchParameters searchParameters,
-            AugmentationRequestFilteringParameters filteringParameters)
+                AugmentationRequestPagingParameters pagingParameters)
         {
+            // Get the List of Augmentations as Data Transfer Objects using Projection for Better Performance
             var augs = await data.Augmentations
-                // Use Projection for Better Performance
                 .Select(aug => aug.Adapt<AugmentationResponseModel>())
                 .ToListAsync();
-            
-            // If the Type Filter Is Set...
-            if (filteringParameters.Type != null)
-            {
-                // ...Filter Out the Augmentations which Don't Adhere to the Filter
-                augs = augs
-                    .Where(aug => aug.Type == filteringParameters.Type)
-                    .ToList();
-            }
 
-            // If the Area Filter Is Set...
-            if (filteringParameters.Area != null)
-            {
-                // ...Filter Out the Augmentations which Don't Adhere to the Filter
-                augs = augs
-                    .Where(aug => aug.Area == filteringParameters.Area)
-                    .ToList();
-            }
+            // Filter the List
+            augs = FilterAugmentationList(augs, filteringParameters);
 
-            // If the Activation Filter Is Set...
-            if (filteringParameters.Activation != null)
-            {
-                // ...Filter Out the Augmentations which Don't Adhere to the Filter
-                augs = augs
-                    .Where(aug => aug.Activation == filteringParameters.Activation)
-                    .ToList();
-            }
+            // Page the List
+            augs = PageAugmentationList(augs, pagingParameters);
 
-            // If the Energy Consumption Filter Is Set...
-            if (filteringParameters.EnergyConsumption != null)
-            {
-                // ...Filter Out the Augmentations which Don't Adhere to the Filter
-                augs = augs
-                    .Where(aug => aug.EnergyConsumption == filteringParameters.EnergyConsumption)
-                    .ToList();
-            }
-                
-            augs = augs
-                // Skip the Entities Contained in the Pages Before the Requested Page
-                .Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
-                .Take(pagingParameters.PageSize).ToList();
+            // Search the List
+            augs = SearchAugmentationList(augs, searchParameters);
 
-            // If there is No Search Term...
-            if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))
-            {
-                // ...Return the Augmentations
-                return augs;
-            }
-
-            // Transform the Term into Lower Case
-            var lowerCaseTerm = searchParameters.SearchTerm.ToLower();
-
-            // Return the Augmentations whose Lowered Name or Lowered Description Contains the Lowered Search Term
-            return augs.Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm) || aug.Description.ToLower().Contains(lowerCaseTerm));
+            // Return the List
+            return augs;
         }
 
         /// <summary>

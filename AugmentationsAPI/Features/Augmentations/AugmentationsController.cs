@@ -49,7 +49,7 @@
             [FromQuery]AugmentationRequestFilteringParameters filteringParameters)
         {
             // Return a Paged List of all Augmentations from the Database
-            return Ok(await augRepo.GetAll(pagingParameters, searchParameters, filteringParameters));
+            return Ok(await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters));
         }
 
         /// <summary>

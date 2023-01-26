@@ -8,13 +8,13 @@
         /// <summary>
         /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
-        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param> 
         /// <returns> A Paged List of all Augmentations in the Database. </returns>
-        public Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters,
+        public Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestFilteringParameters filteringParameters,
             AugmentationRequestSearchParameters searchParameters,
-            AugmentationRequestFilteringParameters filteringParameters);
+            AugmentationRequestPagingParameters pagingParameters);
 
         /// <summary>
         /// Returns an Augmentation with a Matching Id which is Tracked by Entity Framework..
