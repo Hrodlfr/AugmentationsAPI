@@ -35,13 +35,17 @@
                 .Take(pagingParameters.PageSize)
                 .ToListAsync();
 
+            // If there is No Search Term...
             if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))
             {
+                // ...Return the Augmentations
                 return augs;
             }
 
+            // Transform the Term into Lower Case
             var lowerCaseTerm = searchParameters.SearchTerm.ToLower();
 
+            // Return the Augmentations whose Lowered Name or Lowered Description Contains the Lowered Search Term
             return augs.Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm) || aug.Description.ToLower().Contains(lowerCaseTerm));
         }
 
