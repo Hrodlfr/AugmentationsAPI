@@ -23,17 +23,57 @@
         /// </summary>
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// <returns> A Paged List of all Augmentations in the Database. </returns>
         public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestPagingParameters pagingParameters,
-            AugmentationRequestSearchParameters searchParameters)
+            AugmentationRequestSearchParameters searchParameters,
+            AugmentationRequestFilteringParameters filteringParameters)
         {
             var augs = await data.Augmentations
                 // Use Projection for Better Performance
                 .Select(aug => aug.Adapt<AugmentationResponseModel>())
+                .ToListAsync();
+            
+            // If the Type Filter Is Set...
+            if (filteringParameters.Type != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Type == filteringParameters.Type)
+                    .ToList();
+            }
+
+            // If the Area Filter Is Set...
+            if (filteringParameters.Area != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Area == filteringParameters.Area)
+                    .ToList();
+            }
+
+            // If the Activation Filter Is Set...
+            if (filteringParameters.Activation != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.Activation == filteringParameters.Activation)
+                    .ToList();
+            }
+
+            // If the Energy Consumption Filter Is Set...
+            if (filteringParameters.EnergyConsumption != null)
+            {
+                // ...Filter Out the Augmentations which Don't Adhere to the Filter
+                augs = augs
+                    .Where(aug => aug.EnergyConsumption == filteringParameters.EnergyConsumption)
+                    .ToList();
+            }
+                
+            augs = augs
                 // Skip the Entities Contained in the Pages Before the Requested Page
                 .Skip((pagingParameters.PageNumber - 1) * pagingParameters.PageSize)
-                .Take(pagingParameters.PageSize)
-                .ToListAsync();
+                .Take(pagingParameters.PageSize).ToList();
 
             // If there is No Search Term...
             if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))

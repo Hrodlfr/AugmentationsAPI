@@ -34,6 +34,7 @@
         ///
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// 
         /// <returns> A Paged List of all Augmentations from the Database. </returns>
         ///
@@ -44,10 +45,11 @@
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Produces(ContentTypeApplicationJson)]
         public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll([FromQuery]AugmentationRequestPagingParameters pagingParameters,
-            [FromQuery]AugmentationRequestSearchParameters searchParameters)
+            [FromQuery]AugmentationRequestSearchParameters searchParameters,
+            [FromQuery]AugmentationRequestFilteringParameters filteringParameters)
         {
             // Return a Paged List of all Augmentations from the Database
-            return Ok(await augRepo.GetAll(pagingParameters, searchParameters));
+            return Ok(await augRepo.GetAll(pagingParameters, searchParameters, filteringParameters));
         }
 
         /// <summary>
