@@ -45,9 +45,9 @@
                 // Generate a Link for Updating a Resource
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Update", values: new { id = id })!,
-                    Rel = UpdateLowercase + LinkRelAugmentationSuffix,
-                    Method = UpdateUppercase
+                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Put", values: new { id = id })!,
+                    Rel = PutLowercase + LinkRelAugmentationSuffix,
+                    Method = PutUppercase
                 },
                 
                 // Generate a Link for Patching a Resource

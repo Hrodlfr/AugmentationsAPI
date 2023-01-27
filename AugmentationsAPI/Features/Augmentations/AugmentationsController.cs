@@ -23,31 +23,36 @@
         }
 
         /// <summary>
-        /// Returns a Paged List of all Augmentations from the Database.
+        /// Returns a List of Augmentations.
         /// </summary>
         /// 
         /// <remarks>
+        /// The List of Augmentations Can be Searched, Filtered and Is Paged.
+        /// 
         /// Sample Request:
         ///
         ///     GET Augmentations?pageSize=50&#38;pageNumber=1&#38;searchTerm=Typhoon
         ///     {
         ///     }
-        /// 
         /// </remarks>
         ///
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
         /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// 
-        /// <returns> A Paged List of all Augmentations from the Database. </returns>
+        /// <returns> A List of Augmentations. </returns>
         ///
-        /// <response code="200"> A Paged List of all Augmentations from the Database was Returned. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <response code="200"> Returns the List of Augmentations. </response>
+        /// <response code="400"> If the Parameters Aren't Valid. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Consumes(ContentTypeApplicationJson)]
         [Produces(ContentTypeApplicationJson)]
-        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll([FromQuery]AugmentationRequestPagingParameters pagingParameters,
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll(
+            [FromQuery]AugmentationRequestPagingParameters pagingParameters,
             [FromQuery]AugmentationRequestSearchParameters searchParameters,
             [FromQuery]AugmentationRequestFilteringParameters filteringParameters)
         {
@@ -66,7 +71,7 @@
         }
 
         /// <summary>
-        /// Attempts to Return an Augmentation with a Matching Id from the Database.
+        /// Returns a Specific Augmentation.
         /// </summary>
         ///
         /// <remarks>
@@ -75,42 +80,42 @@
         ///     GET Augmentations/1
         ///     {
         ///     }
-        ///
         /// </remarks>
         /// 
-        /// <param name="id"> The Id which will be used to find a matching Augmentation. </param>
+        /// <param name="id"> The Id which will be used to Find a Specific Augmentation. </param>
         /// 
-        /// <returns> A Specific Augmentation or NotFound If an Augmentation with a Matching Id Couldn't be Found. </returns>
+        /// <returns> A Specific Augmentation. </returns>
         /// 
-        /// <response code="200"> The Matching Augmentation was Returned. </response>
-        /// <response code="404"> The Matching Augmentation wasn't found. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <response code="200"> Returns the Specific Augmentation. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="404"> If the Specific Augmentation Can't be Found. </response>
         [HttpGet(RouteIdParameter)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Consumes(ContentTypeApplicationJson)]
         [Produces(ContentTypeApplicationJson)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AugmentationResponseModel>> Get(int id)
         {
-            // Attempt to Get the Matching Augmentation
-            var matchingAug = await augRepo.Get(id, false);
+            // Get the Specific Augmentation
+            var specificAug = await augRepo.Get(id, false);
 
             // If the Augmentation was Not Found...
-            if (matchingAug == null)
+            if (specificAug == null)
             {
                 // Return NotFound
                 return NotFound();
             }
             
-            // Generate HATEOAS Links for this Resource
-            matchingAug.Links = linkGenerationService.GenerateLinks(matchingAug.Id);
+            // Generate HATEOAS Links for the Specific Augmentation
+            specificAug.Links = linkGenerationService.GenerateLinks(specificAug.Id);
             
-            // Return Ok with the Augmentation
-            return Ok(matchingAug);
+            // Return Ok with the Specific Augmentation
+            return Ok(specificAug);
         }
 
         /// <summary>
-        /// Attempts to Create a New Augmentation.
+        /// Creates a New Augmentation.
         /// </summary>
         ///
         /// <remarks>
@@ -125,21 +130,21 @@
         ///         "activation": "Manual",
         ///         "energyConsumption": "Ammo"
         ///     }
-        /// 
         /// </remarks>
         /// 
         /// <param name="model"> A Data Transfer Object whose Data will be Used to Create a Augmentation. </param>
         /// 
-        /// <returns> The newly Created Augmentation or BadRequest If it wasn't valid. </returns>
+        /// <returns> The Newly Created Augmentation. </returns>
         ///
-        /// <response code="201"> The New Augmentation was Created and Returned. </response>
-        /// <response code="400"> The New Augmentation isn't Valid. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <response code="201"> Returns the Newly Created Augmentation. </response>
+        /// <response code="400"> If the New Augmentation isn't Valid. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
         [HttpPost]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Produces(ContentTypeApplicationJson)]
         public async Task<ActionResult> Post(AugmentationRequestModel model)
         {
             // Create the New Augmentation
@@ -159,7 +164,7 @@
         }
 
         /// <summary>
-        /// Attempts to Update an Existing Augmentation.
+        /// Updates a Specific Augmentation.
         /// </summary>
         ///
         /// <remarks>
@@ -174,29 +179,30 @@
         ///         "activation": "Manual",
         ///         "energyConsumption": "Medium"
         ///     }
-        /// 
         /// </remarks>
         /// 
-        /// <param name="id"> The Id of an Existing Augmentation whose Data will be Updated. </param>
+        /// <param name="id"> The Id of a Specific Augmentation whose Data will be Updated. </param>
         /// <param name="model"> A Data Transfer Object which contains the Updated Data for an Augmentation. </param>
         /// 
-        /// <returns> Ok if the Update was Successful,
-        ///         NotFound If the Augmentation is Not Found,
-        ///         Or BadRequest If the New Values weren't Valid. </returns>
+        /// <returns> The Newly Updated Augmentation. </returns>
         /// 
-        /// <response code="200"> The Augmentation was Updated. </response>
-        /// <response code="404"> The Augmentation which was to be Updated couldn't be Found. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <response code="200"> Returns the Newly Updated Augmentation. </response>
+        /// <response code="400"> If the Updated Data Isn't Valid. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="404"> If the Specific Augmentation Can't be Found. </response>
         [HttpPut(RouteIdParameter)]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Update(int id, AugmentationRequestModel model)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Put(int id, AugmentationRequestModel model)
         {
-            // Attempt to Get the Augmentation which is to be Updated
+            // Get the Augmentation which is to be Updated
             var augToUpdate = await augRepo.Get(id);
 
-            // If The Augmentation was Not Found...
+            // If the Augmentation was Not Found...
             if (augToUpdate == null)
             {
                 // ...Return NotFound
@@ -217,7 +223,7 @@
         }
 
         /// <summary>
-        /// Attempts to Patch an Existing Augmentation.
+        /// Patches a Specific Augmentation.
         /// </summary>
         ///
         /// <remarks>
@@ -231,28 +237,30 @@
         ///             "value": "Patched"
         ///         }
         ///     ]
-        /// 
         /// </remarks>
         /// 
-        /// <param name="id"> The Id of an Existing Augmentation whose Data will be Patched. </param>
+        /// <param name="id"> The Id of a Specific Augmentation whose Data will be Patched. </param>
         /// <param name="patchDoc"> The Patch Document which includes the Patching Operations which will be Performed. </param>
         /// 
-        /// <returns></returns>
-        /// <response code="200"> The Augmentation was Patched. </response>
-        /// <response code="404"> The Augmentation which was to be Patched couldn't be Found. </response>
-        /// <response code="422"> The Patch Request Contained Validation Errors. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <returns> The Newly Patched Augmentation. </returns>
+        /// 
+        /// <response code="200"> Returns the Newly Patched Augmentation. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="404"> If the Specific Augmentation Can't be Found. </response>
+        /// <response code="422"> If the Patch Request Isn't Valid. </response>
         [HttpPatch(RouteIdParameter)]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
         {
-            // Attempt to Get the Augmentation which is to be Patched
+            // Get the Augmentation which is to be Patched
             var augToPatch = await augRepo.Get(id);
 
-            // If The Augmentation was Not Found...
+            // If the Augmentation was Not Found...
             if (augToPatch == null)
             {
                 // ...Return NotFound
@@ -286,7 +294,7 @@
         }
 
         /// <summary>
-        /// Attempts to Delete and Existing Augmentation. 
+        /// Deletes a Specific Augmentation. 
         /// </summary>
         ///
         /// <remarks>
@@ -295,27 +303,27 @@
         ///     DELETE Augmentations/1
         ///     {
         ///     }
-        /// 
         /// </remarks>
         /// 
-        /// <param name="id"> The Id of the Augmentation which is to be Deleted. </param>
+        /// <param name="id"> The Id of a Specific Augmentation which is to be Deleted. </param>
         /// 
-        /// <returns> Ok if the Deletion was Successful
-        ///         or BadRequest If it wasn't. </returns>
+        /// <returns> An Action Result of Ok. </returns>
         ///
-        /// <response code="200"> The Augmentation was Deleted. </response>
-        /// <response code="404"> The Augmentation which was to be Deleted couldn't be Found. </response>
-        /// <response code="401"> The User is not Authorized to Perform this Action. </response>
+        /// <response code="200"> Returns Ok Indicating that the Specific Augmentation has been Deleted. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="404"> If the Specific Augmentation Can't be Found.  </response>
         [HttpDelete(RouteIdParameter)]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(int id)
         {
-            // Attempt to Get the Augmentation which is to be Deleted
+            // Get the Augmentation which is to be Deleted
             var augToDelete = await augRepo.Get(id);
             
-            // If The Augmentation was Not Found...
+            // If the Augmentation was Not Found...
             if (augToDelete == null)
             {
                 // ...Return NotFound
@@ -330,10 +338,24 @@
         }
 
         /// <summary>
-        /// Returns the Allowed Methods for Requests made to the API.
+        /// Returns an Action Result of Ok With the Allowed Methods for Requests in the Header.
         /// </summary>
-        /// <returns> The Allowed Methods for Requests made to the API. </returns>
+        ///
+        /// <remarks>
+        /// Sample Request:
+        ///
+        ///     OPTIONS Augmentations
+        ///     {
+        ///     }
+        /// </remarks>
+        /// 
+        /// <returns> An Action Result of Ok With the Allowed Methods for Requests in the Header. </returns>
+        ///
+        /// <response code="200"> Returns Ok With the Allowed Methods for Requests in the Header. </response>
         [HttpOptions]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult Options()
         {
             // Add the Allowed Methods to the Header

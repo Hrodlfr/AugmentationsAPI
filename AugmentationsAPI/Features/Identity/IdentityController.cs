@@ -26,7 +26,7 @@
         }
 
         /// <summary>
-        /// Attempts to Register a User.
+        /// Registers a User.
         /// </summary>
         /// 
         /// <remarks>
@@ -36,21 +36,20 @@
         ///     {
         ///      "userName": "JCDenton", 
         ///      "password": "NanoAugmented"
-        ///     {
-        /// 
+        ///     }
         /// </remarks>
         /// 
         /// <param name="model"> A Data Transfer Object whose Data will be Used to Register the User. </param>
         ///                      
-        /// <returns> Ok if the Registration is Successful
-        ///           or BadRequest if the Registration is Unsuccessful. </returns>
+        /// <returns> An Action Result of Ok. </returns>
         ///           
-        /// <response code="200"> The User was Successfully Registered. </response>
-        /// <response code="400"> The Users Registration was Unsuccessful. </response>
-        [HttpPost]
+        /// <response code="200"> Returns Ok Indicating that the User was Registered Successfully. </response>
+        /// <response code="400"> If the Registration Data Isn't Valid. </response>
+        [HttpPost(nameof(Register))]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Route(nameof(Register))]
         public async Task<ActionResult> Register(RegisterRequestModel model)
         {
             // Initialize a New User and Map the Request Models Values to It
@@ -66,7 +65,7 @@
         }
 
         /// <summary>
-        /// Attempts to Login a User.
+        /// Logs in a User.
         /// </summary>
         /// 
         /// <remarks>
@@ -77,21 +76,19 @@
         ///      "userName": "JCDenton",
         ///      "password": "NanoAugmented"
         ///     }
-        /// 
         /// </remarks>
         /// 
         /// <param name="model"> A Data Transfer Object whose Data will be Used to Register the User. </param>
         /// 
-        /// <returns> A Model which contains the Users JWT Token if the Login is Successful
-        ///           or an Unauthorized if the Login is Unsuccessful. </returns>
+        /// <returns> The Users JWT Token. </returns>
         ///
-        /// <response code="200"> The User is Successfully Logged In and Their Unique JWT Token was Returned. </response>
-        /// <response code="401"> The Log In Was Unsuccessful Possibly due to a Wrong Password or Username. </response>
-        [HttpPost]
+        /// <response code="200"> Returns the Users JWT Token. </response>
+        /// <response code="401"> If the Login Credentials aren't Valid. </response>
+        [HttpPost(nameof(Login))]
+        [Consumes(ContentTypeApplicationJson)]
+        [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Produces(ContentTypeApplicationJson)]
-        [Route(nameof(Login))]
         public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel model)
         {
             // Attempt to Find a User by the Given UserName

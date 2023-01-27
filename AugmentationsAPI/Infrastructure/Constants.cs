@@ -10,9 +10,9 @@
 
         public const string GetUppercase = "GET";
 
-        public const string UpdateUppercase = "UPDATE";
+        public const string PutUppercase = "PUT";
         
-        public const string UpdateLowercase = "update";
+        public const string PutLowercase = "put";
 
         public const string PatchUppercase = "PATCH";
         
