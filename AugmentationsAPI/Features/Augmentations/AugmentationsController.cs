@@ -145,7 +145,7 @@
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Post(AugmentationRequestModel model)
+        public async Task<ActionResult<AugmentationResponseModel>> Post(AugmentationRequestModel model)
         {
             // Create the New Augmentation
             var idOfNewAug = await augRepo.Create(model);
@@ -197,7 +197,7 @@
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> Put(int id, AugmentationRequestModel model)
+        public async Task<ActionResult<AugmentationResponseModel>> Put(int id, AugmentationRequestModel model)
         {
             // Get the Augmentation which is to be Updated
             var augToUpdate = await augRepo.Get(id);
@@ -255,7 +255,7 @@
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
+        public async Task<ActionResult<AugmentationResponseModel>> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
         {
             // Get the Augmentation which is to be Patched
             var augToPatch = await augRepo.Get(id);
@@ -338,7 +338,7 @@
         }
 
         /// <summary>
-        /// Returns an Action Result of Ok With the Allowed Methods for Requests in the Header.
+        /// Returns the Allowed Methods for Requests in the Header.
         /// </summary>
         ///
         /// <remarks>
@@ -349,9 +349,9 @@
         ///     }
         /// </remarks>
         /// 
-        /// <returns> An Action Result of Ok With the Allowed Methods for Requests in the Header. </returns>
+        /// <returns> The Allowed Methods for Requests in the Header. </returns>
         ///
-        /// <response code="200"> Returns Ok With the Allowed Methods for Requests in the Header. </response>
+        /// <response code="200"> Returns The Allowed Methods for Requests in the Header. </response>
         [HttpOptions]
         [Consumes(ContentTypeApplicationJson)]
         [Produces(ContentTypeApplicationJson)]
