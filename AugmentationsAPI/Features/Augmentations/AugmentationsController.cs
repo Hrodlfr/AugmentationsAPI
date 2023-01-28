@@ -1,8 +1,10 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations
 {
+    using Repository;
     using Models;
-    using Links;
-    using PDF;
+    using Models.Parameters;
+    using Links.Services;
+    using PDF.Services;
     using Mapster;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.JsonPatch;
@@ -15,12 +17,12 @@
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
-        private readonly ILinkGenerationService<AugmentationResponseModel> augLinkGenerator;
-        private readonly IPDFGenerationService<AugmentationResponseModel> augPDFGenerator;
+        private readonly ILinkGenerationService<AugResponseModel> augLinkGenerator;
+        private readonly IPDFGenerationService<AugResponseModel> augPDFGenerator;
 
         public AugmentationsController(IAugmentationRepository augRepo,
-            ILinkGenerationService<AugmentationResponseModel> augLinkGenerator,
-            IPDFGenerationService<AugmentationResponseModel> augPDFGenerator)
+            ILinkGenerationService<AugResponseModel> augLinkGenerator,
+            IPDFGenerationService<AugResponseModel> augPDFGenerator)
         {
             this.augRepo = augRepo;
             this.augLinkGenerator = augLinkGenerator;
@@ -57,10 +59,10 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<IEnumerable<AugmentationResponseModel>>> GetAll(
-            [FromQuery]AugmentationRequestPagingParameters pagingParameters,
-            [FromQuery]AugmentationRequestSearchParameters searchParameters,
-            [FromQuery]AugmentationRequestFilteringParameters filteringParameters)
+        public async Task<ActionResult<IEnumerable<AugResponseModel>>> GetAll(
+            [FromQuery]AugRequestPagingParameters pagingParameters,
+            [FromQuery]AugRequestSearchParameters searchParameters,
+            [FromQuery]AugRequestFilteringParameters filteringParameters)
         {
             // Get the List of Augmentations from the Database
             var augs = await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters);
@@ -110,9 +112,9 @@
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetPDF(
-            [FromQuery] AugmentationRequestPagingParameters pagingParameters,
-            [FromQuery] AugmentationRequestSearchParameters searchParameters,
-            [FromQuery] AugmentationRequestFilteringParameters filteringParameters)
+            [FromQuery] AugRequestPagingParameters pagingParameters,
+            [FromQuery] AugRequestSearchParameters searchParameters,
+            [FromQuery] AugRequestFilteringParameters filteringParameters)
         {
             // Get the List of Augmentations from the Database
             var augs = await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters);
@@ -156,7 +158,7 @@
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<AugmentationResponseModel>> Get(int id)
+        public async Task<ActionResult<AugResponseModel>> Get(int id)
         {
             // Get the Specific Augmentation
             var specificAug = await augRepo.Get(id, false);
@@ -206,7 +208,7 @@
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<AugmentationResponseModel>> Post(AugmentationRequestModel model)
+        public async Task<ActionResult<AugResponseModel>> Post(AugRequestModel model)
         {
             // Create the New Augmentation
             var idOfNewAug = await augRepo.Create(model);
@@ -258,7 +260,7 @@
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<AugmentationResponseModel>> Put(int id, AugmentationRequestModel model)
+        public async Task<ActionResult<AugResponseModel>> Put(int id, AugRequestModel model)
         {
             // Get the Augmentation which is to be Updated
             var augToUpdate = await augRepo.Get(id);
@@ -316,7 +318,7 @@
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<ActionResult<AugmentationResponseModel>> Patch(int id, JsonPatchDocument<AugmentationRequestModel> patchDoc)
+        public async Task<ActionResult<AugResponseModel>> Patch(int id, JsonPatchDocument<AugRequestModel> patchDoc)
         {
             // Get the Augmentation which is to be Patched
             var augToPatch = await augRepo.Get(id);
@@ -329,7 +331,7 @@
             }
 
             // Map the Augmentation to a Request Model
-            var model = augToPatch.Adapt<AugmentationRequestModel>();
+            var model = augToPatch.Adapt<AugRequestModel>();
             
             // Apply the Patching Operations to the Request Model
             patchDoc.ApplyTo(model);

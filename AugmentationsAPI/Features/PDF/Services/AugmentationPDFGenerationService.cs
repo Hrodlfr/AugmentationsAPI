@@ -1,4 +1,4 @@
-﻿namespace AugmentationsAPI.Features.PDF
+﻿namespace AugmentationsAPI.Features.PDF.Services
 {
     using Augmentations.Models;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using QuestPDF.Helpers;
     using QuestPDF.Infrastructure;
 
-    public class AugmentationPDFGenerationService : IPDFGenerationService<AugmentationResponseModel>
+    public class AugmentationPDFGenerationService : IPDFGenerationService<AugResponseModel>
     {
         private const string DystopianGoldHex = "#FFD700";
         private const string HeaderText = "Augmentations";
@@ -29,7 +29,7 @@
         /// </summary>
         /// <param name="resources"> The Augmentations which will be Used for Generating a Pdf File. </param>
         /// <returns> A Byte Array of the Generated PDF File. </returns>
-        public byte[] GeneratePdf(IEnumerable<AugmentationResponseModel> resources)
+        public byte[] GeneratePdf(IEnumerable<AugResponseModel> resources)
         {
             // Create the PDF Document
             var pdf = Document.Create(container =>

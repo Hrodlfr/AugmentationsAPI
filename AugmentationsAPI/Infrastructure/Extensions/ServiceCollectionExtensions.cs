@@ -1,19 +1,19 @@
 ﻿namespace AugmentationsAPI.Infrastructure.Extensions
 {
-    using Features.Augmentations;
-    using Features.Identity;
     using Data;
     using Data.Models;
+    using Features.Identity.Services;
+    using Features.Links.Services;
+    using Features.PDF.Services;
+    using Features.Augmentations.Models;
+    using Features.Augmentations.Repository;
+    using System.Reflection;
+    using System.Text;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
     using Microsoft.OpenApi.Models;
-    using System.Reflection;
-    using System.Text;
-    using Features.Links;
-    using Features.PDF;
-    using Features.Augmentations.Models;
 
     public static class ServiceCollectionExtensions
     {
@@ -121,9 +121,9 @@
                 // Inject the Augmentations Repository
                 .AddTransient<IAugmentationRepository, AugmentationRepository>()
                 // Inject the Link Generation Service for Augmentations
-                .AddTransient<ILinkGenerationService<AugmentationResponseModel>, AugmentationLinkGenerationService>()
+                .AddTransient<ILinkGenerationService<AugResponseModel>, AugmentationLinkGenerationService>()
                 // Inject the PDF Generation Service for Augmentations
-                .AddTransient<IPDFGenerationService<AugmentationResponseModel>, AugmentationPDFGenerationService>()
+                .AddTransient<IPDFGenerationService<AugResponseModel>, AugmentationPDFGenerationService>()
                 // Inject Routing
                 .AddRouting()
                 // Inject the HttpContext Accessor

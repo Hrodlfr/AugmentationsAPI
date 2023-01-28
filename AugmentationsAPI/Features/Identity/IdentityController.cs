@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using static Infrastructure.Constants;
+    using AugmentationsAPI.Features.Identity.Services;
 
     [Route("[controller]")]
     [ApiController]

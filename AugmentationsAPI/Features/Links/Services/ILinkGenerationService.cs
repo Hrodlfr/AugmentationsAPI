@@ -1,4 +1,4 @@
-﻿namespace AugmentationsAPI.Features.Links
+﻿namespace AugmentationsAPI.Features.Links.Services
 {
     using Models;
 

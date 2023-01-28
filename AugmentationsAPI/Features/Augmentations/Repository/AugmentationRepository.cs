@@ -1,10 +1,11 @@
-﻿namespace AugmentationsAPI.Features.Augmentations
+﻿namespace AugmentationsAPI.Features.Augmentations.Repository
 {
     using Data;
     using Data.Models;
     using Models;
     using Mapster;
     using Microsoft.EntityFrameworkCore;
+    using AugmentationsAPI.Features.Augmentations.Models.Parameters;
 
     public class AugmentationRepository : IAugmentationRepository
     {
@@ -19,8 +20,8 @@
         /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
         /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
         /// <returns> A Filtered List of Augmentations. </returns>
-        private List<AugmentationResponseModel> FilterAugmentationList(IEnumerable<AugmentationResponseModel> augs,
-            AugmentationRequestFilteringParameters filteringParameters)
+        private List<AugResponseModel> FilterAugmentationList(IEnumerable<AugResponseModel> augs,
+            AugRequestFilteringParameters filteringParameters)
         {
             // If the Type Filter Is Set...
             if (filteringParameters.Type != null)
@@ -57,15 +58,15 @@
             // Returned the Filtered List
             return augs.ToList();
         }
-        
+
         /// <summary>
         /// Pages a List of Augmentations by the Given Parameters.
         /// </summary>
         /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <returns> A Paged List of Augmentations. </returns>
-        private List<AugmentationResponseModel> PageAugmentationList(IEnumerable<AugmentationResponseModel> augs,
-            AugmentationRequestPagingParameters pagingParameters)
+        private List<AugResponseModel> PageAugmentationList(IEnumerable<AugResponseModel> augs,
+            AugRequestPagingParameters pagingParameters)
         {
             // Return a Paged List of Augmentations
             return augs
@@ -75,15 +76,15 @@
                 .Take(pagingParameters.PageSize)
                 .ToList();
         }
-        
+
         /// <summary>
         /// Searches a List of Augmentations by the Given Parameters.
         /// </summary>
         /// <param name="augs"> A List of Augmentations which will be Filtered. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
         /// <returns> A List of Augmentations meeting the Search Criteria. </returns>
-        private List<AugmentationResponseModel> SearchAugmentationList(IEnumerable<AugmentationResponseModel> augs,
-            AugmentationRequestSearchParameters searchParameters)
+        private List<AugResponseModel> SearchAugmentationList(IEnumerable<AugResponseModel> augs,
+            AugRequestSearchParameters searchParameters)
         {
             // If there is No Search Term...
             if (string.IsNullOrWhiteSpace(searchParameters.SearchTerm))
@@ -97,16 +98,16 @@
 
             // Return the Augmentations who meet the Search Criteria
             return augs
-                .Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm) 
+                .Where(aug => aug.Name.ToLower().Contains(lowerCaseTerm)
                               || aug.Description.ToLower().Contains(lowerCaseTerm))
                 .ToList();
         }
-        
+
         public AugmentationRepository(ApplicationDbContext data)
         {
             this.data = data;
         }
-        
+
         /// <summary>
         /// Returns a Paged List of all Augmentations from the Database.
         /// </summary>
@@ -114,13 +115,13 @@
         /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
         /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
         /// <returns> A Paged List of all Augmentations in the Database. </returns>
-        public async Task<IEnumerable<AugmentationResponseModel>> GetAll(AugmentationRequestFilteringParameters filteringParameters,
-            AugmentationRequestSearchParameters searchParameters,
-                AugmentationRequestPagingParameters pagingParameters)
+        public async Task<IEnumerable<AugResponseModel>> GetAll(AugRequestFilteringParameters filteringParameters,
+            AugRequestSearchParameters searchParameters,
+                AugRequestPagingParameters pagingParameters)
         {
             // Get the List of Augmentations as Data Transfer Objects using Projection for Better Performance
             var augs = await data.Augmentations
-                .Select(aug => aug.Adapt<AugmentationResponseModel>())
+                .Select(aug => aug.Adapt<AugResponseModel>())
                 .ToListAsync();
 
             // Filter the List
@@ -148,34 +149,34 @@
                 .Where(augment => augment.Id == id)
                 .FirstOrDefaultAsync();
         }
-        
+
         /// <summary>
         /// Returns an Augmentation with a Matching Id which is Not Tracked by Entity Framework.
         /// </summary>
         /// <param name="id"> An Id which will be used to Find a matching Augmentation. </param>
         /// <param name="tracking"> A Boolean Value which Indicates whether the Returned Entity should be Tracked or Not. </param>
         /// <returns> An Augmentation with a Matching Id Or Null If an Augmentation with a Matching Id wasn't Found. </returns>
-        public async Task<AugmentationResponseModel?> Get(int id, bool tracking)
+        public async Task<AugResponseModel?> Get(int id, bool tracking)
         {
             // Return the First Augmentation with a Matching Id
             return await data.Augmentations
                 .AsNoTracking()
                 .Where(augment => augment.Id == id)
                 // Use Projection for Better Performance
-                .Select(aug => aug.Adapt<AugmentationResponseModel>())
+                .Select(aug => aug.Adapt<AugResponseModel>())
                 .FirstOrDefaultAsync();
         }
-        
+
         /// <summary>
         /// Adds an Augmentation to the Database.
         /// </summary>
         /// <param name="model"> A Data Transfer Object whose Data will be Used to Create a Augmentation. </param>
         /// <returns> The Id of the newly Added Augmentation. </returns>
-        public async Task<int> Create(AugmentationRequestModel model)
+        public async Task<int> Create(AugRequestModel model)
         {
             // Initialize a new Augmentation and Map the Request Models Values to It
             var augmentation = model.Adapt<Augmentation>();
-            
+
             // Add the Augmentation to the Database
             await data.Augmentations.AddAsync(augmentation);
 
@@ -192,11 +193,11 @@
         /// <param name="augToUpdate"> An Augmentation whose Data will be Updated. </param>
         /// <param name="model"> A Data Transfer Object which contains the Updated Data for an Augmentation. </param>
         /// <returns> A Bool indicating whether the Update was Successful. </returns>
-        public async Task Update(Augmentation augToUpdate, AugmentationRequestModel model)
+        public async Task Update(Augmentation augToUpdate, AugRequestModel model)
         {
             // Map the Updated Values to the Existing Augmentation
             model.Adapt(augToUpdate);
-            
+
             // Save the Changes to the Database
             await data.SaveChangesAsync();
         }
@@ -210,7 +211,7 @@
         {
             // Delete the Augmentation from the Database
             data.Augmentations.Remove(augToDelete);
-            
+
             // Save the Changes to the Database
             await data.SaveChangesAsync();
         }

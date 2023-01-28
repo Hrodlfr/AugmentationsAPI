@@ -1,4 +1,4 @@
-﻿namespace AugmentationsAPI.Features.Identity
+﻿namespace AugmentationsAPI.Features.Identity.Services
 {
     using System.Text;
     using System.Security.Claims;

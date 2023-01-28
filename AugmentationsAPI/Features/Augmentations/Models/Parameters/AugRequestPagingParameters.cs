@@ -1,17 +1,17 @@
-﻿namespace AugmentationsAPI.Features.Augmentations.Models
+﻿namespace AugmentationsAPI.Features.Augmentations.Models.Parameters
 {
     using System.ComponentModel.DataAnnotations;
-    
+
     /// <summary>
     /// The Parameters Used for Paging the a List of Augmentations.
     /// </summary>
-    public class AugmentationRequestPagingParameters : IValidatableObject
+    public class AugRequestPagingParameters : IValidatableObject
     {
         /// <summary>
         /// The Minimum Page Number.
         /// </summary>
         private const int MinimumPageNumber = 1;
-        
+
         /// <summary>
         /// The Error Displayed when the Page Number is Invalid.
         /// </summary>
@@ -21,12 +21,12 @@
         /// The Number of the Page whose Items will be Selected.
         /// </summary>
         public int PageNumber { get; set; } = MinimumPageNumber;
-        
+
         /// <summary>
         /// The Minimum Size of a Page.
         /// </summary>
         private const int MinPageSize = 1;
-        
+
         /// <summary>
         /// The Maximum Size of a Page.
         /// </summary>

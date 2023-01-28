@@ -1,13 +1,13 @@
-﻿namespace AugmentationsAPI.Features.Links
+﻿namespace AugmentationsAPI.Features.Links.Services
 {
     using Models;
     using static Infrastructure.Constants;
     using AugmentationsAPI.Features.Augmentations.Models;
 
-    public class AugmentationLinkGenerationService : ILinkGenerationService<AugmentationResponseModel>
+    public class AugmentationLinkGenerationService : ILinkGenerationService<AugResponseModel>
     {
         private const string LinkRelAugmentationSuffix = "_augmentation";
-        
+
         private readonly LinkGenerator linkGenerator;
         private readonly IHttpContextAccessor httpContext;
 
@@ -31,7 +31,7 @@
                 new Link()
                 {
                     Href = linkGenerator
-                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Get", values: new { id = id })!,
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Get", values: new { id })!,
                     Rel = LinkRelSelf,
                     Method = GetUppercase
                 },
@@ -49,7 +49,7 @@
                 new Link()
                 {
                     Href = linkGenerator
-                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Put", values: new { id = id })!,
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Put", values: new { id })!,
                     Rel = PutLowercase + LinkRelAugmentationSuffix,
                     Method = PutUppercase
                 },
@@ -58,7 +58,7 @@
                 new Link()
                 {
                     Href = linkGenerator
-                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Patch", values: new { id = id })!,
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Patch", values: new { id })!,
                     Rel = PatchLowercase + LinkRelAugmentationSuffix,
                     Method = PatchUppercase
                 },
@@ -67,7 +67,7 @@
                 new Link()
                 {
                     Href = linkGenerator
-                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Delete", values: new { id = id })!,
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Delete", values: new { id })!,
                     Rel = DeleteLowercase + LinkRelAugmentationSuffix,
                     Method = DeleteUppercase
                 }

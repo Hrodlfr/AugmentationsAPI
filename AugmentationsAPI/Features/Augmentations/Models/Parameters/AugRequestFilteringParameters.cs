@@ -1,11 +1,11 @@
-﻿namespace AugmentationsAPI.Features.Augmentations.Models
+﻿namespace AugmentationsAPI.Features.Augmentations.Models.Parameters
 {
     using Data.Models;
 
     /// <summary>
     /// The Parameters Used for Filtering the a List of Augmentations. 
     /// </summary>
-    public class AugmentationRequestFilteringParameters
+    public class AugRequestFilteringParameters
     {
         /// <summary>
         /// The Type By which the List of Augmentations List will be Filtered.

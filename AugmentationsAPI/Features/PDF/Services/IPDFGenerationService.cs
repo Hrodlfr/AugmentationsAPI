@@ -1,4 +1,4 @@
-﻿namespace AugmentationsAPI.Features.PDF
+﻿namespace AugmentationsAPI.Features.PDF.Services
 {
     public interface IPDFGenerationService<TResource>
     {
