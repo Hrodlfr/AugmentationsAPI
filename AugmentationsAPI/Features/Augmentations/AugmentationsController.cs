@@ -3,7 +3,6 @@
     using Links;
     using Mapster;
     using Models;
-    using Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
@@ -15,12 +14,13 @@
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
-        private readonly ILinkGenerationService<Augmentation> augLinkGenerator;
+        private readonly ILinkGenerationService<AugmentationResponseModel> augLinkGenerator;
 
         public AugmentationsController(IAugmentationRepository augRepo, ILinkGenerationService<Augmentation> linkGenerationService)
+            ILinkGenerationService<AugmentationResponseModel> augLinkGenerator,
         {
             this.augRepo = augRepo;
-            this.augLinkGenerator = linkGenerationService;
+            this.augLinkGenerator = augLinkGenerator;
         }
 
         /// <summary>

@@ -1,10 +1,10 @@
 ﻿namespace AugmentationsAPI.Features.Links
 {
     using Models;
-    using Data.Models;
     using static Infrastructure.Constants;
+    using AugmentationsAPI.Features.Augmentations.Models;
 
-    public class AugmentationLinkGenerationService : ILinkGenerationService<Augmentation>
+    public class AugmentationLinkGenerationService : ILinkGenerationService<AugmentationResponseModel>
     {
         private const string LinkRelAugmentationSuffix = "_augmentation";
         

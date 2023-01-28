@@ -12,6 +12,7 @@
     using System.Reflection;
     using System.Text;
     using Features.Links;
+    using Features.Augmentations.Models;
 
     public static class ServiceCollectionExtensions
     {
@@ -118,8 +119,8 @@
                 .AddTransient<IIdentityService, IdentityService>()
                 // Inject the Augmentations Repository
                 .AddTransient<IAugmentationRepository, AugmentationRepository>()
-                // Inject the Link Generation Service
-                .AddTransient<ILinkGenerationService<Augmentation>, AugmentationLinkGenerationService>()
+                // Inject the Link Generation Service for Augmentations
+                .AddTransient<ILinkGenerationService<AugmentationResponseModel>, AugmentationLinkGenerationService>()
                 // Inject Routing
                 .AddRouting()
                 // Inject the HttpContext Accessor
