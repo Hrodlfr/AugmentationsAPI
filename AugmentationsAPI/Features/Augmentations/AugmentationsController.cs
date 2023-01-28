@@ -353,10 +353,12 @@
         /// <returns> The Allowed Methods for Requests in the Header. </returns>
         ///
         /// <response code="200"> Returns The Allowed Methods for Requests in the Header. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
         [HttpOptions]
         [Consumes(ContentTypeApplicationJson)]
         [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult Options()
         {
             // Add the Allowed Methods to the Header
