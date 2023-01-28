@@ -38,7 +38,9 @@ namespace AugmentationsAPI
                 // Add Authorization Middleware
                 .UseAuthorization()
                 // Add Exception Handler Middleware
-                .AddExceptionHandler();
+                .AddExceptionHandler()
+                // Add Response Caching Middleware
+                .UseResponseCaching();
 
             app.MapControllers();
             app.Run();

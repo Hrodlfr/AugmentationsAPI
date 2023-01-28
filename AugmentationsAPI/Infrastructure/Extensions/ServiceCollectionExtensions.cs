@@ -127,7 +127,9 @@
                 // Inject Routing
                 .AddRouting()
                 // Inject the HttpContext Accessor
-                .AddHttpContextAccessor();
+                .AddHttpContextAccessor()
+                // Inject Response Caching
+                .AddResponseCaching();
 
             // Return the Collection of Services
             return services;

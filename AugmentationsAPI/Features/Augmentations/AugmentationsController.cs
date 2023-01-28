@@ -51,6 +51,7 @@
         /// <response code="400"> If the Parameters Aren't Valid. </response>
         /// <response code="401"> If the User Isn't Authorized. </response>
         [HttpGet]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         [Consumes(ContentTypeApplicationJson)]
         [Produces(ContentTypeApplicationJson)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -81,6 +82,7 @@
         /// 
         /// <remarks>
         /// The List of Augmentations Can be Searched, Filtered and Is Paged.
+        /// The Response is Stored on the Client for 60 Seconds.
         /// 
         /// Sample Request:
         ///
@@ -101,6 +103,7 @@
         /// <response code="404"> If No Augmentations Were Found. </response>
         [HttpGet]
         [Route(RoutePDF)]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         [Produces(ContentTypeApplicationPDF)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
