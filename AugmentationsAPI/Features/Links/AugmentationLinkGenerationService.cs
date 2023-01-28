@@ -1,67 +1,73 @@
 ﻿namespace AugmentationsAPI.Features.Links
 {
     using Models;
+    using Data.Models;
     using static Infrastructure.Constants;
 
-    public class LinkGenerationService : ILinkGenerationService
+    public class AugmentationLinkGenerationService : ILinkGenerationService<Augmentation>
     {
         private const string LinkRelAugmentationSuffix = "_augmentation";
         
         private readonly LinkGenerator linkGenerator;
         private readonly IHttpContextAccessor httpContext;
 
-        public LinkGenerationService(IHttpContextAccessor httpContext, LinkGenerator linkGenerator)
+        public AugmentationLinkGenerationService(IHttpContextAccessor httpContext, LinkGenerator linkGenerator)
         {
             this.httpContext = httpContext;
             this.linkGenerator = linkGenerator;
         }
 
         /// <summary>
-        /// Generates HATEOAS Links for a Resource.
+        /// Generates HATEOAS Links for an Augmentation.
         /// </summary>
         /// <param name="id"> The Id of the Augmentation for which the Links will be Generated. </param>
-        /// <returns> Generated Links for the Resource. </returns>
+        /// <returns> Generated Links for the Augmentation. </returns>
         public List<Link> GenerateLinks(int id)
         {
             // Generate a List of Links
             var links = new List<Link>()
             {
-                // Generate a Link for Getting this Resource
+                // Generate a Link to GET this Augmentation
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Get", values: new { id = id })!,
+                    Href = linkGenerator
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Get", values: new { id = id })!,
                     Rel = LinkRelSelf,
                     Method = GetUppercase
                 },
                 
-                // Generate a Link for Posting an Resource
+                // Generate a Link to POST an Augmentation
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Post")!,
+                    Href = linkGenerator
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Post")!,
                     Rel = PostLowercase + LinkRelAugmentationSuffix,
                     Method = PostUppercase
                 },
                 
-                // Generate a Link for Updating a Resource
+                // Generate a Link to UPDATE this Augmentation
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Put", values: new { id = id })!,
+                    Href = linkGenerator
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Put", values: new { id = id })!,
                     Rel = PutLowercase + LinkRelAugmentationSuffix,
                     Method = PutUppercase
                 },
                 
-                // Generate a Link for Patching a Resource
+                // Generate a Link to PATCH this Augmentation
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Patch", values: new { id = id })!,
+                    Href = linkGenerator
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Patch", values: new { id = id })!,
                     Rel = PatchLowercase + LinkRelAugmentationSuffix,
                     Method = PatchUppercase
                 },
                 
-                // Generate a Link for Deleting a Resource
+                // Generate a Link to DELETE this Augmentation
                 new Link()
                 {
-                    Href = linkGenerator.GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Delete", values: new { id = id })!,
+                    Href = linkGenerator
+                    .GetUriByAction(httpContext.HttpContext!, controller: "Augmentations", action: "Delete", values: new { id = id })!,
                     Rel = DeleteLowercase + LinkRelAugmentationSuffix,
                     Method = DeleteUppercase
                 }

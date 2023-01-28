@@ -119,7 +119,7 @@
                 // Inject the Augmentations Repository
                 .AddTransient<IAugmentationRepository, AugmentationRepository>()
                 // Inject the Link Generation Service
-                .AddTransient<ILinkGenerationService, LinkGenerationService>()
+                .AddTransient<ILinkGenerationService<Augmentation>, AugmentationLinkGenerationService>()
                 // Inject Routing
                 .AddRouting()
                 // Inject the HttpContext Accessor

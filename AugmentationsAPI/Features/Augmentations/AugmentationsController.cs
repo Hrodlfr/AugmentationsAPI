@@ -3,6 +3,7 @@
     using Links;
     using Mapster;
     using Models;
+    using Data.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,12 @@
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
-        private readonly ILinkGenerationService linkGenerationService;
+        private readonly ILinkGenerationService<Augmentation> augLinkGenerator;
 
-        public AugmentationsController(IAugmentationRepository augRepo, ILinkGenerationService linkGenerationService)
+        public AugmentationsController(IAugmentationRepository augRepo, ILinkGenerationService<Augmentation> linkGenerationService)
         {
             this.augRepo = augRepo;
-            this.linkGenerationService = linkGenerationService;
+            this.augLinkGenerator = linkGenerationService;
         }
 
         /// <summary>
@@ -63,7 +64,7 @@
             foreach (var aug in augs)
             {
                 // ...Generate Links
-                aug.Links = linkGenerationService.GenerateLinks(aug.Id);
+                aug.Links = augLinkGenerator.GenerateLinks(aug.Id);
             }
             
             // Return the List of Augmentations
@@ -108,7 +109,7 @@
             }
             
             // Generate HATEOAS Links for the Specific Augmentation
-            specificAug.Links = linkGenerationService.GenerateLinks(specificAug.Id);
+            specificAug.Links = augLinkGenerator.GenerateLinks(specificAug.Id);
             
             // Return Ok with the Specific Augmentation
             return Ok(specificAug);
@@ -157,7 +158,7 @@
             var newAug = await augRepo.Get(idOfNewAug, false);
 
             // Generate Links for the New Augmentation
-            newAug!.Links = linkGenerationService.GenerateLinks(newAug.Id);
+            newAug!.Links = augLinkGenerator.GenerateLinks(newAug.Id);
             
             // Return Created with the New Augmentation in the Response Body and Its URL in the Response Header
             return Created(urlOfTheNewAug, newAug);
@@ -216,7 +217,7 @@
             var updatedAug = await augRepo.Get(id, false);
 
             // Generate Links for the Updated Augmentation
-            updatedAug!.Links = linkGenerationService.GenerateLinks(updatedAug.Id);
+            updatedAug!.Links = augLinkGenerator.GenerateLinks(updatedAug.Id);
 
             // Return Ok with the Updated Aug
             return Ok(updatedAug);
@@ -287,7 +288,7 @@
             var patchedAug = await augRepo.Get(id, false);
 
             // Generate Links for the Patched Augmentation
-            patchedAug!.Links = linkGenerationService.GenerateLinks(patchedAug.Id);
+            patchedAug!.Links = augLinkGenerator.GenerateLinks(patchedAug.Id);
             
             // Return Ok with the Patched Augmentation
             return Ok(patchedAug);
