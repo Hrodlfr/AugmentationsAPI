@@ -12,6 +12,7 @@
     using System.Reflection;
     using System.Text;
     using Features.Links;
+    using Features.PDF;
     using Features.Augmentations.Models;
 
     public static class ServiceCollectionExtensions
@@ -121,6 +122,8 @@
                 .AddTransient<IAugmentationRepository, AugmentationRepository>()
                 // Inject the Link Generation Service for Augmentations
                 .AddTransient<ILinkGenerationService<AugmentationResponseModel>, AugmentationLinkGenerationService>()
+                // Inject the PDF Generation Service for Augmentations
+                .AddTransient<IPDFGenerationService<AugmentationResponseModel>, AugmentationPDFGenerationService>()
                 // Inject Routing
                 .AddRouting()
                 // Inject the HttpContext Accessor

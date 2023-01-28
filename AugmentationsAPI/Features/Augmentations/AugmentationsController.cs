@@ -1,8 +1,9 @@
 ﻿namespace AugmentationsAPI.Features.Augmentations
 {
-    using Links;
-    using Mapster;
     using Models;
+    using Links;
+    using PDF;
+    using Mapster;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,15 @@
     {
         private readonly IAugmentationRepository augRepo;
         private readonly ILinkGenerationService<AugmentationResponseModel> augLinkGenerator;
+        private readonly IPDFGenerationService<AugmentationResponseModel> augPDFGenerator;
 
-        public AugmentationsController(IAugmentationRepository augRepo, ILinkGenerationService<Augmentation> linkGenerationService)
+        public AugmentationsController(IAugmentationRepository augRepo,
             ILinkGenerationService<AugmentationResponseModel> augLinkGenerator,
+            IPDFGenerationService<AugmentationResponseModel> augPDFGenerator)
         {
             this.augRepo = augRepo;
             this.augLinkGenerator = augLinkGenerator;
+            this.augPDFGenerator = augPDFGenerator;
         }
 
         /// <summary>
@@ -69,6 +73,59 @@
             
             // Return the List of Augmentations
             return Ok(augs);
+        }
+
+        /// <summary>
+        /// Returns a PDF File Generated from a List of Augmentations.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// The List of Augmentations Can be Searched, Filtered and Is Paged.
+        /// 
+        /// Sample Request:
+        ///
+        ///     GET Augmentations/PDF?pageSize=50&#38;pageNumber=1&#38;searchTerm=Typhoon
+        ///     {
+        ///     }
+        /// </remarks>
+        /// 
+        /// <param name="pagingParameters"> The Parameters Used for Paging the List of the Augmentations. </param>
+        /// <param name="searchParameters"> The Parameters Used for Searching the List of the Augmentations. </param>
+        /// <param name="filteringParameters"> The Parameters Used for Filtering the List of the Augmentations. </param>
+        /// 
+        /// <returns> A PDF File generated from a List of Augmentations. </returns>
+        /// 
+        /// <response code="200"> Returns the Generated PDF. </response>
+        /// <response code="400"> If the Parameters Aren't Valid. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="404"> If No Augmentations Were Found. </response>
+        [HttpGet]
+        [Route(RoutePDF)]
+        [Produces(ContentTypeApplicationPDF)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetPDF(
+            [FromQuery] AugmentationRequestPagingParameters pagingParameters,
+            [FromQuery] AugmentationRequestSearchParameters searchParameters,
+            [FromQuery] AugmentationRequestFilteringParameters filteringParameters)
+        {
+            // Get the List of Augmentations from the Database
+            var augs = await augRepo.GetAll(filteringParameters, searchParameters, pagingParameters);
+
+            // If No Augmentation were Found...
+            if (!augs.Any())
+            {
+                // Return NotFound
+                return NotFound();
+            }
+
+            // Generate the PDF File
+            var bytes = augPDFGenerator.GeneratePdf(augs);
+
+            // Return the PDF File
+            return File(bytes, ContentTypeApplicationPDF, "Augmentations.pdf");
         }
 
         /// <summary>
@@ -367,6 +424,5 @@
             // Return Ok
             return Ok();
         }
-
     }
 }

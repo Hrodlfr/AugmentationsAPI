@@ -6,7 +6,11 @@
 
         public const string RouteError = "/error";
 
+        public const string RoutePDF = "PDF";
+
         public const string ContentTypeApplicationJson = "application/json";
+
+        public const string ContentTypeApplicationPDF = "application/pdf";
 
         public const string GetUppercase = "GET";
 
