@@ -11,13 +11,14 @@
     using CsvHelper.TypeConversion;
     using System.Globalization;
     using Microsoft.IdentityModel.Tokens;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using static Infrastructure.Constants;
 
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
