@@ -2,6 +2,7 @@
 {
     using Data;
     using Data.Models;
+    using ActionFilters;
     using Features.Identity.Services;
     using Features.Links.Services;
     using Features.PDF.Services;
@@ -129,7 +130,9 @@
                 // Inject the HttpContext Accessor
                 .AddHttpContextAccessor()
                 // Inject Response Caching
-                .AddResponseCaching();
+                .AddResponseCaching()
+                // Inject the Action Filter for Validating Whether an Uploaded File is a CSV File or Not
+                .AddScoped<ValidateFileIsCSV>();
 
             // Return the Collection of Services
             return services;

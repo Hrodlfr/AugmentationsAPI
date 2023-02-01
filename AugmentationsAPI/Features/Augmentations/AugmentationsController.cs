@@ -5,15 +5,19 @@
     using Models.Parameters;
     using Links.Services;
     using PDF.Services;
+    using Infrastructure.ActionFilters;
     using Mapster;
-    using Microsoft.AspNetCore.Authorization;
+    using CsvHelper;
+    using CsvHelper.TypeConversion;
+    using System.Globalization;
+    using Microsoft.IdentityModel.Tokens;
     using Microsoft.AspNetCore.JsonPatch;
     using Microsoft.AspNetCore.Mvc;
     using static Infrastructure.Constants;
 
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AugmentationsController : ControllerBase
     {
         private readonly IAugmentationRepository augRepo;
@@ -224,6 +228,98 @@
             
             // Return Created with the New Augmentation in the Response Body and Its URL in the Response Header
             return Created(urlOfTheNewAug, newAug);
+        }
+
+        /// <summary>
+        /// Creates New Augmentations from a CSV File.
+        /// </summary>
+        /// 
+        /// <param name="csv"> The CSV File whose Data will be Used to Create Augmentations. </param>
+        /// 
+        /// <returns> An Action Result of Ok. </returns>
+        /// 
+        /// <response code="200"> Returns an Action Result of Ok Indicating that the Augmentations from the CSV File Were Created. </response>
+        /// <response code="400"> If a Non CSV File was Uploaded or If the CSV File Contains no Augmentations. </response>
+        /// <response code="401"> If the User Isn't Authorized. </response>
+        /// <response code="422"> If CSV Files Augmentations are Not Valid. </response>
+        [ServiceFilter(typeof(ValidateFileIsCSV))]
+        [HttpPost(RouteCSV)]
+        [Consumes(ContentTypeMultiPartFormData)]
+        [Produces(ContentTypeApplicationJson)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> PostFromCSV(IFormFile csv)
+        {
+            // Initialize a List of Augmentations
+            IEnumerable<AugRequestModel>? augs = null;
+
+            // Get the Stream of the Uploaded File
+            var csvStream = csv.OpenReadStream();
+            // Using a Strem Reader Created from the File Strean...
+            using (var reader = new StreamReader(csvStream))
+            // Using a CSV Reader Created from the Stream Reader...
+            using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                // Try To...
+                try
+                {
+                    // ...Convert the Data from the CSV File to a List of Augmentations
+                    augs = csvReader.GetRecords<AugRequestModel>().ToList();
+                }
+                // Catch Type Conversion Exceptions...
+                catch (TypeConverterException ex)
+                {
+                    // Add an Error with a Helpful Message to the Model State
+                    ModelState
+                        .AddModelError($"Type Conversion", $"The Type {ex.Text} at Row {csvReader.Parser.RawRow} Couldn't be Converted into a Type.");
+
+                    // Return UnprocessableEntity with the Errors of the Model State
+                    return UnprocessableEntity(ModelState);
+                }
+                // Cath Header Validation Exceptions
+                catch (HeaderValidationException)
+                {
+                    // Add an Error with a Message to the Model State
+                    ModelState
+                        .AddModelError($"Invalid Headers", $"One or More Headers are Invalid.");
+
+                    // Return UnprocessableEntity with the Errors of the Model State
+                    return UnprocessableEntity(ModelState);
+                }
+            }
+
+            // If the List of Augmentations is Empty...
+            if (augs.IsNullOrEmpty())
+            {
+                // ...Return BadRequest
+                return BadRequest();
+            }
+
+            // For Each Augmentation in the List of Augmentations...
+            for (int index = 0; index < augs.Count(); index += 1)
+            {
+                // ...If the Augmentation Isn't Valid...
+                if (!TryValidateModel(augs.ElementAt(index)))
+                {
+                    // Add an Error with a Message to the Model State
+                    ModelState.AddModelError("Error Location", $"Validation Errors Occured at Row {index + 1}.");
+
+                    // Return UnprocessableEntity with the Errors of the Model State
+                    return UnprocessableEntity(ModelState);
+                }
+            };
+
+            // For Each Augmentation in the List of Augmentations...
+            foreach (var aug in augs)
+            {
+                // ...Create the Augmentation
+                await augRepo.Create(aug);
+            };
+
+            // Return Ok
+            return Ok();
         }
 
         /// <summary>

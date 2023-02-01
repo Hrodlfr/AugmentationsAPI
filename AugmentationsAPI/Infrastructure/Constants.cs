@@ -8,9 +8,13 @@
 
         public const string RoutePDF = "PDF";
 
+        public const string RouteCSV = "CSV";
+
         public const string ContentTypeApplicationJson = "application/json";
 
         public const string ContentTypeApplicationPDF = "application/pdf";
+
+        public const string ContentTypeMultiPartFormData = "multipart/form-data";
 
         public const string GetUppercase = "GET";
 

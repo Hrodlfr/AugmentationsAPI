@@ -1,0 +1,9 @@
+﻿Type,Area,Name,Description,Activation,EnergyConsumption
+Mechanical,Torso,Typhoon Explosive System,The Typhoon is a series of interlinked electromagnetic launchers installed in the user's arms and connected to a processor at the base of the user's spine.,Manual,Ammo
+NanoTechnological,Legs,Speed Enhancement,"Ionic polymeric gel myofibrils are woven into the leg muscles. Increasing the speed at which an agenct can run and climb, the height they can jump, and reducing damage they receive from falls.",Manual,Low
+NanoTechnological,Skin,Cloak,"Subdermal pigmentation cells allow the agent to blend with their surrounding enviroment, rendering them effectively invisible to observation by organic hostiles.",Manual,High
+NanoTechnological,Eyes,Targeting,"Image-scaling and recognition provided by multiplexing the optic nerve with doped polyacetylene quantum wires not only increase accuracy, but also delivers limited situational info about a target.",Manual,Low
+Mechanical,Eyes,Wayfinder Radar System,"The Wayfinder Radar System gives the user a limited-range radar indicator, which is projected directly on to the retina optical user interface.",Passive,None
+Mechanical,Cranium,Social Enhancer,The C.A.S.I.E. Implant provides its user with a direct monitor of behaviour patterns and likely responses from conversational subjects.,Contextual,None
+Mechanical,Back,Icarus Landing System,In freefall the Icarus Landing System will automatically activate the High-Fall Safeguard System.,Contextual,None
+Mechanical,Arms,Nanoblade,"The Nanoblade is an attachment mounted on a Cybernetic Arm Prosthesis. It is Most often wielded as a melee weapon, but may also be used as a projectile.",Manual,Ammo
