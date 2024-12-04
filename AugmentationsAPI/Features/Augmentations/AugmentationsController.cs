@@ -292,7 +292,7 @@
             }
 
             // If the List of Augmentations is Empty...
-            if (augs.IsNullOrEmpty())
+            if (augs is null)
             {
                 // ...Return BadRequest
                 return BadRequest();
@@ -521,7 +521,7 @@
         public ActionResult Options()
         {
             // Add the Allowed Methods to the Header
-            Response.Headers.Add("Allow", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
+            Response.Headers.Append("Allow", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
 
             // Return Ok
             return Ok();
